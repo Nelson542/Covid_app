@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body style="background-color:#888;">
+    <form style="text-align:center" method = 'POST'>
+           <h2>Login Form</h2>
+           {{ form.hidden_tag() }}
+           <br>
+           <br>
+           <br>
+           <div>
+              {{ form.username.label }}<br>
+              {{ form.username }}
+              <br>
+              <br>
+              {{ form.password.label }}<br>
+              {{ form.password }}
+              <br>
+                          
+              <br>
+              {{ form.submit }}
+           </div>        
+     </form>
+</body>
+</html>

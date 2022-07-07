@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient status update</title>
+</head>
+<body style="background-color:#888;">
+    <h2  style="text-align: center;" >Welcome to the {{ Hospital_Name.title() }} Hospital portal</h2>
+    <br>
+    <br>
+    <h3>Update Status of {{ patient_Fname.title()}} {{ patient_Lname.title()}}</h3>
+    <br>
+    <br>
+    <h4>Current Status --> "{{ status }}"</h4>
+    <br>
+    <br>
+    <form method = 'POST' >
+        <legend>Change Status</legend>
+        {{ form.hidden_tag() }}
+        <br>
+        
+                
+        <div>
+            
+            
+            {{ form.Status }}
+            <br>
+            {{ form.submit }}
+       
+           
+        </div> 
+
+    
+</body>
+</html>

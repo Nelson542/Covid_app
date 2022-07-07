@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Vaccination status</title>
+</head>
+<body style="background-color:#888;">
+    <form method = 'POST' >
+        <legend>Update Vaccination Status</legend>
+        {{ form.hidden_tag() }}
+        
+        <div>
+           {{ form.FirstDose.label }}<br>
+           {{ form.FirstDose }}
+           <br>
+           
+           {{ form.SecondDose.label }}<br>
+           {{ form.SecondDose }}
+           <br>
+
+           {{ form.PrecautionaryDose.label }}<br>
+           {{ form.PrecautionaryDose }}
+           <br>
+       
+           <br>
+           {{ form.submit }}
+        </div>        
+  </form>
+
+    
+</body>
+</html>

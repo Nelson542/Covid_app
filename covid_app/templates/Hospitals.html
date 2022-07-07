@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospitals</title>
+</head>
+<body style="background-color:#888;">
+
+    <h2  style="text-align: center;" >Hospitals</h2>
+    <br>
+    <br>
+
+    <form method="POST" action="/addnew">
+        <input type="submit" value="Add Hospital" name="addnew"/>
+    </form>
+    <div style="text-align: center;" >
+    <table class="center" style="margin-left:auto;margin-right:auto;padding: 5px;border-spacing: 25px;" >
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+    
+            <th scope="col">HospitalName</th>
+    
+            <th scope="col">ContactNumber</th>
+          </tr>
+        </thead>
+           
+        {% for key,value in panda_out.iterrows() %}               
+        <tr>
+            <td>{{ key + 1 }}</td>
+            <td>{{ value['Name'] }}</td>
+            <td>{{ value['Contact'] }}</td>
+            <td><b><a href="{{url_for('HospDelete',hospid=value['pk'])}}">Delete</a></b></td>
+            
+        </tr>
+        {% endfor %}
+            
+    </table>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+    <form method="POST" action="/">
+        <input type="submit" value="LogOut" name="LogOut"/>
+    </form>
+    
+
+    
+    
+</body>
+</html>

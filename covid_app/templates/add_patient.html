@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add patient</title>
+</head>
+<body style="background-color:#888;">
+
+    <form method = 'POST' >
+        <legend>Add patient</legend>
+        {{ form.hidden_tag() }}
+        
+        <div>
+            <br> 
+           {{ form.Fname.label }}<br>
+           {{ form.Fname }}
+           <br>
+
+           <br> 
+           {{ form.Lname.label }}<br>
+           {{ form.Lname }}
+           <br>
+
+           <br> 
+           {{ form.DOB.label }}<br>
+           {{ form.DOB }}
+           <br>
+
+           <br> 
+           {{ form.Gender.label }}<br>
+           {{ form.Gender }}
+           <br>
+
+           <br> 
+           {{ form.TestResult.label }}<br>
+           {{ form.TestResult }}
+           <br>
+           
+       
+           <br>
+           {{ form.submit }}
+        </div>        
+    </form>
+    
+</body>
+</html>
