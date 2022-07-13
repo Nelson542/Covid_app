@@ -2,6 +2,7 @@ from covid_app import db
 from datetime import datetime
 from sqlalchemy import Date
 
+
 class Hospitals(db.Model):
     id = db.Column(db.Integer, primary_key = True )
     HospitalName = db.Column(db.String(50),nullable = False)
