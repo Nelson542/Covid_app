@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from . import config
 
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "covid_tracker"

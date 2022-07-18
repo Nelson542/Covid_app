@@ -3,13 +3,14 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python app.py -h 0.0.0.0
+    command: python app.py -h 0.0.0.0 
     volumes:
       - ./:/usr/src/app/
     ports:
       - 5000:5000
     depends_on:
       - db
+    
   db:
     image: postgres:13-alpine
     volumes:
@@ -19,7 +20,7 @@ services:
   pgadmin:
           image: dpage/pgadmin4
           environment: 
-              - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+              - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin4.org
               - PGADMIN_DEFAULT_PASSWORD=admin123
           ports:
               - '5050:80'

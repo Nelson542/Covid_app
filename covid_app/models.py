@@ -2,32 +2,38 @@ from covid_app import db
 from datetime import datetime
 from sqlalchemy import Date
 
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key = True )
+    username = db.Column(db.String(20),unique = True, nullable = False)
+    password = db.Column(db.String(20),unique = True, nullable = False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    hospitals = db.relationship('Hospitals', backref = 'users')
+
 
 class Hospitals(db.Model):
     id = db.Column(db.Integer, primary_key = True )
-    HospitalName = db.Column(db.String(50),nullable = False)
-    ContactNumber = db.Column(db.Integer,unique = True, nullable = False)
-    Username = db.Column(db.String(20),unique = True, nullable = False)
-    Password = db.Column(db.String(20),unique = True, nullable = False)
-    TotalCapacity = db.Column(db.Integer)
-    ICU_Beds = db.Column(db.Integer)
-    First_Dose = db.Column(db.Integer)
-    Second_Dose = db.Column(db.Integer)
-    Precautionary_Dose = db.Column(db.Integer)
+    hospital_name = db.Column(db.String(50),nullable = False)
+    contact_number = db.Column(db.Integer,unique = True, nullable = False)  
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id')) 
+    total_capacity = db.Column(db.Integer)
+    icu_beds = db.Column(db.Integer)
+    first_dose = db.Column(db.Integer)
+    second_dose = db.Column(db.Integer)
+    precautionary_dose = db.Column(db.Integer)
     patients = db.relationship('Patients', backref = 'hospitals')
-
+    
 
 class Patients(db.Model):
     id = db.Column(db.Integer, primary_key = True )
-    Hosp_id = db.Column(db.Integer,db.ForeignKey('hospitals.id'))
-    Date = db.Column(db.DateTime)
-    Fname = db.Column(db.String(20), nullable = False)
-    Lname = db.Column(db.String(20), nullable = False)
-    DOB = db.Column(db.DateTime)
-    Age = db.Column(db.Integer)
-    Gender = db.Column(db.String(10), nullable = False)
-    TestResult =  db.Column(db.String(10))
-    Status = db.Column(db.String(10))
+    hosp_id = db.Column(db.Integer,db.ForeignKey('hospitals.id'))
+    date_added = db.Column(db.DateTime)
+    first_name = db.Column(db.String(20), nullable = False)
+    last_name = db.Column(db.String(20), nullable = False)
+    dob = db.Column(db.DateTime)
+    age = db.Column(db.Integer)
+    gender = db.Column(db.String(10), nullable = False)
+    test_result =  db.Column(db.String(10))
+    status = db.Column(db.String(10))
  
     
 
