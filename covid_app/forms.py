@@ -9,14 +9,20 @@ class AdminLogin(FlaskForm):
     password = PasswordField(label="Password",validators=[DataRequired()])
     submit = SubmitField(label='Submit')
 
+class AddUser(FlaskForm):
 
-class NewHospital(FlaskForm):
-
-    HospitalName = StringField(label="HospitalName",validators=[DataRequired()])
-    ContactNumber = IntegerField(label="ContactNumber",validators=[DataRequired()])
-    Username = StringField(label="Username",validators=[DataRequired()])
-    Password = PasswordField(label="Password",validators=[DataRequired()])  
+    username = StringField(label="Name",validators=[DataRequired()])
+    password = PasswordField(label="Password",validators=[DataRequired()])
     submit = SubmitField(label='Submit')
+
+
+class AddHospital(FlaskForm):
+
+    hospital_name = StringField(label="Hospital Name",validators=[DataRequired()])
+    contact_number = IntegerField(label="Contact Number",validators=[DataRequired()])
+    user = SelectField(label = 'User',coerce=str,validators=[DataRequired()]) 
+    submit = SubmitField(label='Submit')
+    
 
 class HospitalUpdate(FlaskForm):
 

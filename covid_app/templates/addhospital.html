@@ -1,0 +1,23 @@
+{% extends "home.html" %}
+    {% block content %}
+        <form style="text-align:center" method = 'POST' autocomplete="off">
+            <legend>Add Hospital</legend>
+            {{ form.hidden_tag() }}
+            
+            <div>
+            {{ form.hospital_name.label }}<br>
+            {{ form.hospital_name }}
+            <br>
+            
+            {{ form.contact_number.label }}<br>
+            {{ form.contact_number }}
+            <br>
+            <br> 
+
+            {{ form.user }}
+            <br>                           
+            <br>
+            {{ form.submit }}
+            </div>        
+        </form>
+    {% endblock %}

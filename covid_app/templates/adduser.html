@@ -1,0 +1,27 @@
+{% extends "home.html" %}
+    {% block content %}
+ 
+
+        <form style="text-align:center" method = 'POST' autocomplete="off">
+            <h2>Add new user</h2>
+            {{ form.hidden_tag() }}
+            <br>
+            <br>
+            <br>
+            <div>
+               {{ form.username.label }}<br>
+               {{ form.username }}
+               <br>
+               <br>
+               {{ form.password.label }}<br>
+               {{ form.password }}
+               <br>
+                           
+               <br>
+               {{ form.submit }}
+            </div>        
+        </form>
+
+          
+
+    {% endblock %}

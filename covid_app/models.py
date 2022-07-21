@@ -4,22 +4,24 @@ from sqlalchemy import Date
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key = True )
-    username = db.Column(db.String(20),unique = True, nullable = False)
-    password = db.Column(db.String(20),unique = True, nullable = False)
+    username = db.Column(db.String(20), nullable = False)
+    password = db.Column(db.String(20),nullable = False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False)
     hospitals = db.relationship('Hospitals', backref = 'users')
 
 
 class Hospitals(db.Model):
     id = db.Column(db.Integer, primary_key = True )
     hospital_name = db.Column(db.String(50),nullable = False)
-    contact_number = db.Column(db.Integer,unique = True, nullable = False)  
+    contact_number = db.Column(db.Integer, nullable = False)  
     user_id = db.Column(db.Integer,db.ForeignKey('users.id')) 
     total_capacity = db.Column(db.Integer)
     icu_beds = db.Column(db.Integer)
     first_dose = db.Column(db.Integer)
     second_dose = db.Column(db.Integer)
     precautionary_dose = db.Column(db.Integer)
+    is_deleted = db.Column(db.Boolean, default=False)
     patients = db.relationship('Patients', backref = 'hospitals')
     
 

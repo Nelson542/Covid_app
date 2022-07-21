@@ -8,14 +8,15 @@ from covid_app import app , db
 
 from covid_app.models import Users,Hospitals,Patients
 
-from covid_app.forms import AdminLogin, HospitalUpdate, NewHospital,VaccinationStatus,AddPatient, UpdatePatientLogin, UpdatePatientStatus
+from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalUpdate,VaccinationStatus,AddPatient, UpdatePatientLogin, UpdatePatientStatus
 
 
 @app.before_first_request
 def populate_db():
-    admin = Users(username = "admin", password = "123", is_admin = True)
-    db.session.add(admin)
-    db.session.commit()
+    if Users.query.filter_by(is_admin = True).first() is None:
+        admin = Users(username = "admin", password = "12345", is_admin = True)
+        db.session.add(admin)
+        db.session.commit()
 
 
 @app.route('/', methods = ['POST','GET'])
@@ -35,67 +36,114 @@ def home():
 
 @app.route('/admin', methods = ['POST','GET'])
 def admin():
-    form = AdminLogin()
+    form = AdminLogin()    
 
-    """if request.method == 'POST' and form.validate_on_submit():
-        result = Hospitals.query.with_entities(Hospitals.id,Hospitals.HospitalName, Hospitals.Username, Hospitals.Password ).filter_by(Username = form.username.data).first()
-        if result:
-            (id,hospital_name,username,password) = result
-        if form.username.data == "admin" and form.password.data == "123":
+    if request.method == 'POST' and form.validate_on_submit():
+    
+        if Users.query.filter_by(username = form.username.data,password = form.password.data, is_admin = True).first():
             return redirect(url_for('hospitals'))
-        elif result and form.password.data == password:
-            session['id']  = id
-            session['hospital_name']  = hospital_name
-            session['username']  = username
-            session['password']  = password
+        elif Users.query.filter_by(username = form.username.data,password = form.password.data, is_admin = False).first():
+            session['username']  = form.username.data
+            session['password']  = form.password.data
             return redirect(url_for('details'))
         else:
-            return redirect(url_for('admin'))"""
+            return redirect(url_for('admin'))
                
-    return render_template('adminlogin.html', **locals())   
+    return render_template('admin_login.html', **locals())   
 
 
 
-@app.route('/hospitals', methods = ['POST','GET'])
+@app.route('/hospitals', methods = ['POST','GET','PUT'])
 def hospitals():
-       
-    """Hospital = Hospitals.query.all()
- 
-    list_out = []
-    for item in Hospital:        
-            dict_out =  {
-                'pk': item.id,
-                'Name' : item.HospitalName,
-                'Contact' : item.ContactNumber
-            }
-            list_out.append(dict_out)
-       
+
+    result1 = Users.query.filter_by(is_admin = False,is_deleted = False).all()   
+    result2 = db.session.query(Hospitals, Users).join(Users).filter(Hospitals.is_deleted == False).all()
     
-    panda_out = pd.DataFrame(list_out) """
+    user_list =[]
+    for user in result1:
+        user_dict =  {
+                'pk': user.id,
+                'name' : user.username    
+            }
+        user_list.append(user_dict)
+    user_df = pd.DataFrame(user_list)
+
+    hospital_list = []    
+    for hospital, user in result2:        
+            hospital_dict=  {
+                'pk': hospital.id,
+                'name' : hospital.hospital_name,
+                'contact' : hospital.contact_number,
+                'user' : user.username,
+                'is_deleted': user.is_deleted
+            }
+            hospital_list.append(hospital_dict)    
+    hospital_df = pd.DataFrame(hospital_list) 
+    
            
 
-    return render_template("Hospitals.html", )  
-    
-    
-@app.route('/addnew', methods = ['POST','GET'])
-def add_hospital():
-    """form = NewHospital()
+    return render_template("hospitals.html",**locals())  
+
+
+@app.route('/adduser', methods = ['POST','GET'])
+def add_user():
+    form = AddUser()
 
     if form.validate_on_submit():
-        NewHosp = Hospitals(HospitalName = form.HospitalName.data, ContactNumber = form.ContactNumber.data, Username = form.Username.data, Password = form.Password.data)
-        db.session.add(NewHosp)
+        exists = db.session.query(Users.id).filter_by(username = form.username.data,password = form.password.data).first()
+        if exists:
+            print(exists)
+            id = int(exists[0])
+            print(id)
+        
+            db.session.query(Users).filter(Users.id == id).update({Users.is_deleted : False}, synchronize_session = False)
+            db.session.commit()
+        else:    
+            user = Users(username = form.username.data,password = form.password.data, is_admin = False)
+            db.session.add(user)
+            db.session.commit()
+        
+
+        return redirect(url_for('hospitals')) 
+           
+
+    return render_template("adduser.html",**locals())   
+    
+    
+    
+@app.route('/addhosp', methods = ['POST','GET'])
+def add_hospital():
+    form = AddHospital()
+    users = Users.query.with_entities(Users.username).filter_by(is_admin = False,is_deleted = False).all()
+    users_list = [r for (r, ) in users]
+    form.user.choices = users_list
+    print(users_list)
+
+    if form.validate_on_submit():
+        user_admin = Users.query.filter_by(username = form.user.data).first()
+        #print(form.hospital_name.data, form.contact_number.data, form.user.data)
+        hospital = Hospitals(hospital_name = form.hospital_name.data, contact_number = form.contact_number.data, users = user_admin)
+        db.session.add(hospital)
         db.session.commit()
-        return redirect(url_for('hospitals'))"""
+        return redirect(url_for('hospitals'))
 
-    return render_template("add_hospital.html",**locals())   
+    return render_template("addhospital.html",**locals())   
 
 
 
-@app.route("/HospDelete/<int:hospid>")
-def HospDelete(hospid):
-    """Delhosp = Hospitals.query.get(hospid)
-    db.session.delete(Delhosp)
-    db.session.commit()"""
+@app.route("/deletehospital/<int:hospid>")
+def DeleteHospital(hospid):
+    db.session.query(Hospitals).filter(Hospitals.id == hospid).update({Hospitals.is_deleted : True}, synchronize_session = False)
+    db.session.commit()
+    return redirect(url_for('hospitals'))
+
+
+@app.route("/deleteuser/<int:userid>")
+def DeleteUser(userid):
+    db.session.query(Users).filter(Users.id == userid).update({Users.is_deleted : True}, synchronize_session = False)
+    db.session.query(Hospitals).filter(Hospitals.user_id == userid).update({Hospitals.is_deleted : True}, synchronize_session = False)
+
+    db.session.commit()
     return redirect(url_for('hospitals'))
 
 
@@ -215,9 +263,28 @@ def statusupdate():
 
 
 
+"""
+admin_name,admin_password) = Users.query.with_entities(Users.username,Users.password).filter_by(is_admin = True).first()
+    
+
+    if request.method == 'POST' and form.validate_on_submit():
+        users = Users.query.with_entities(Users.id,Users.username,Users.password).filter_by(is_admin = False, username = form.username.data).first()
+        print(users)
+        if result:
+            (id,hospital_name,username,password) = result
+        if form.username.data == admin_name and form.password.data == admin_password:
+            return redirect(url_for('hospitals'))
+        elif users and form.password.data == password:
+            session['id']  = id
+            session['hospital_name']  = hospital_name
+            session['username']  = username
+            session['password']  = password
+            return redirect(url_for('details'))
+        else:
+            return redirect(url_for('admin'))
 
 
-
+"""
 
 
 

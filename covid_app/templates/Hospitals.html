@@ -1,55 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospitals</title>
-</head>
-<body style="background-color:#888;">
+{% extends "home.html" %}
 
-    <h2  style="text-align: center;" >Hospitals</h2>
+    {% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/hospitals.css') }}">
+
+    {% endblock %}
+
+    {% block content %}
+
+    
+
+    <h2  style="text-align: center;" >Welcome!</h2>
     <br>
     <br>
-
-    <form method="POST" action="/addnew">
-        <input type="submit" value="Add Hospital" name="addnew"/>
-    </form>
-    <div style="text-align: center;" >
-    <table class="center" style="margin-left:auto;margin-right:auto;padding: 5px;border-spacing: 25px;" >
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-    
-            <th scope="col">HospitalName</th>
-    
-            <th scope="col">ContactNumber</th>
-          </tr>
-        </thead>
-           
-        {% for key,value in panda_out.iterrows() %}               
-        <tr>
-            <td>{{ key + 1 }}</td>
-            <td>{{ value['Name'] }}</td>
-            <td>{{ value['Contact'] }}</td>
-            <td><b><a href="{{url_for('HospDelete',hospid=value['pk'])}}">Delete</a></b></td>
-            
-        </tr>
-        {% endfor %}
-            
-    </table>
+    <div class="d-flex justify-content-center">
+        <a class="btn btn-outline-primary mr-1" href="/adduser" role="button">Add User</a>
+        <a class="btn btn-outline-primary mr-1" href="/addhosp" role="button">Add Hospital</a>
+        <a class="btn btn-outline-primary mr-1" href="/" role="button">Logout</a>
     </div>
-
     <br>
     <br>
-    <br>
+    <div class="container">
+        <div class="row">
+            
 
-    <form method="POST" action="/">
-        <input type="submit" value="LogOut" name="LogOut"/>
-    </form>
+            <div class="col">
+                <div style="text-align: center;" >
+                    <table class="table css-serial" style="margin-left:auto;margin-right:auto;padding: 5px;border-spacing: 25px;" >
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                    
+                            <th scope="col">Username</th>
+                        </tr>
+                        </thead>
+                        
+                        {% for key,value in user_df.iterrows() %}               
+                        <tr>
+                            <td></td>
+                            <td>{{ value['name'] }}</td>                            
+                            <td><a href="{{url_for('DeleteUser',userid=value['pk'])}}" class="btn btn-outline-primary" role="button"><span class="bi bi-trash"></span></a></td>
+                            
+                        </tr>
+                        {% endfor %}
+                            
+                    </table>
+                </div>
+            </div>
+
+
+                
+            <div class="col">
+                <div style="text-align: center;" >
+                    <table class="table css-serial"style="margin-left:auto;margin-right:auto;padding: 5px;border-spacing: 25px;" >
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                    
+                            <th scope="col">HospitalName</th>
+                    
+                            <th scope="col">ContactNumber</th>
+
+                            <th scope="col">User</th>
+                        </tr>
+                        </thead>
+                        
+                        {% for key,value in hospital_df.iterrows() %} 
+                            {% if value['is_deleted'] == False %}              
+                            <tr>
+                                
+                                <td></td>
+                                <td>{{ value['name'] }}</td>
+                                <td>{{ value['contact'] }}</td>
+                                <td>{{ value['user'] }}</td>      
+                                <td><a href="{{url_for('DeleteHospital',hospid=value['pk'])}}" class="btn btn-outline-primary" role="button"><span class="bi bi-trash"></span></a></td>
+
+                               
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                            
+                    </table>
+                </div>
+            </div>
+            
+
+            
+        
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>    
     
+
 
     
     
-</body>
-</html>
+    {% endblock %}
+
+
+
+    
