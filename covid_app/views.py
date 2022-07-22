@@ -47,8 +47,7 @@ def admin():
             session['password']  = form.password.data
             return redirect(url_for('details'))
         else:
-            return redirect(url_for('admin'))
-               
+            return redirect(url_for('admin'))               
     return render_template('admin_login.html', **locals())   
 
 
@@ -80,8 +79,6 @@ def hospitals():
             hospital_list.append(hospital_dict)    
     hospital_df = pd.DataFrame(hospital_list) 
     
-           
-
     return render_template("hospitals.html",**locals())  
 
 
@@ -92,10 +89,7 @@ def add_user():
     if form.validate_on_submit():
         exists = db.session.query(Users.id).filter_by(username = form.username.data,password = form.password.data).first()
         if exists:
-            print(exists)
             id = int(exists[0])
-            print(id)
-        
             db.session.query(Users).filter(Users.id == id).update({Users.is_deleted : False}, synchronize_session = False)
             db.session.commit()
         else:    
@@ -103,10 +97,7 @@ def add_user():
             db.session.add(user)
             db.session.commit()
         
-
         return redirect(url_for('hospitals')) 
-           
-
     return render_template("adduser.html",**locals())   
     
     
@@ -121,12 +112,19 @@ def add_hospital():
 
     if form.validate_on_submit():
         user_admin = Users.query.filter_by(username = form.user.data).first()
-        #print(form.hospital_name.data, form.contact_number.data, form.user.data)
-        hospital = Hospitals(hospital_name = form.hospital_name.data, contact_number = form.contact_number.data, users = user_admin)
-        db.session.add(hospital)
-        db.session.commit()
-        return redirect(url_for('hospitals'))
+        print(user_admin.id)
+        exists = db.session.query(Hospitals.id).filter_by(hospital_name = form.hospital_name.data,contact_number = form.contact_number.data, user_id = user_admin.id).first()
+        if exists:
+            id = int(exists[0])        
+            db.session.query(Hospitals).filter(Hospitals.id == id).update({Hospitals.is_deleted : False}, synchronize_session = False)
+            db.session.commit()
 
+        else:
+            hospital = Hospitals(hospital_name = form.hospital_name.data, contact_number = form.contact_number.data, users = user_admin)
+            db.session.add(hospital)
+            db.session.commit()
+
+        return redirect(url_for('hospitals'))
     return render_template("addhospital.html",**locals())   
 
 
