@@ -1,0 +1,30 @@
+{% extends "home.html" %}
+
+    {% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}">
+
+    {% endblock %}
+
+    {% block content %}
+
+    
+   
+      <div>
+        <h2  style="text-align: center;" >Welcome to {{ hospital_name.title() }} Hospital portal</h2>
+      </div>  
+        {% block sub %}
+        <div>
+          <a class="btn btn-outline-primary mr-1 " href="{{url_for('patients')}}" role="button">Patients</a>            
+          <a class="btn btn-outline-primary mr-1 " href="{{url_for('hospital_beds')}}" role="button">Hospital Bed Info</a>            
+          <a class="btn btn-outline-primary mr-1 " href="{{url_for('vaccination_status')}}" role="button">Vaccination Status</a>            
+  
+        </div>
+
+        
+        {% endblock %}
+
+        <a class="btn btn-outline-primary mr-1" href="{{url_for('home')}}" role="button">Return to Dashboard</a>
+      
+      
+    
+    {% endblock %}

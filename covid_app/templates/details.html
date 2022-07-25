@@ -1,17 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Details</title>
-</head>
-<body style="background-color:#888;" >
+{% extends "home.html" %}
 
-    <h2  style="text-align: center;" >Welcome to the {{ Hospital_Name.title() }} Hospital portal</h2>
+    {% block head %}
+    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/hospitals.css') }}"-->
+
+    {% endblock %}
+
+    {% block content %}
+
+    <h2  style="text-align: center;" >Welcome {{ username.title() }} </h2>
     <br>
     <br>
-    <form method="POST" action="/addpatient">
+    
+    
+
+
+   
+                        
+                {% for item in hospital_list %} 
+                <div class="row d-flex justify-content-center mb-sm-5">
+                    <a class="btn btn-outline-primary mr-1 " href="{{url_for('update_hospital',hospital_id=item['pk'])}}" role="button">{{ item['name'] }}</a>            
+                </div>
+                {% endfor %}
+                            
+                    
+
+
+
+    <!--form method="POST" action="/addpatient">
         <input type="submit" value="Add Patient Details" name="addP"/>
     </form>
     <br>
@@ -33,7 +48,6 @@
     <br>
     <form method="POST" action="/">
         <input type="submit" value="Return to Dashboard" name="LogOut"/>
-    </form>
+    </form-->
     
-</body>
-</html>
+    {% endblock %}

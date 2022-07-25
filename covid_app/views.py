@@ -8,7 +8,7 @@ from covid_app import app , db
 
 from covid_app.models import Users,Hospitals,Patients
 
-from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalUpdate,VaccinationStatus,AddPatient, UpdatePatientLogin, UpdatePatientStatus
+from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalBeds,VaccinationStatus,AddPatient, UpdatePatientLogin, UpdatePatientStatus
 
 
 @app.before_first_request
@@ -44,7 +44,6 @@ def admin():
             return redirect(url_for('hospitals'))
         elif Users.query.filter_by(username = form.username.data,password = form.password.data, is_admin = False).first():
             session['username']  = form.username.data
-            session['password']  = form.password.data
             return redirect(url_for('details'))
         else:
             return redirect(url_for('admin'))               
@@ -140,7 +139,6 @@ def DeleteHospital(hospid):
 def DeleteUser(userid):
     db.session.query(Users).filter(Users.id == userid).update({Users.is_deleted : True}, synchronize_session = False)
     db.session.query(Hospitals).filter(Hospitals.user_id == userid).update({Hospitals.is_deleted : True}, synchronize_session = False)
-
     db.session.commit()
     return redirect(url_for('hospitals'))
 
@@ -148,9 +146,100 @@ def DeleteUser(userid):
 
 @app.route('/details', methods = ['POST','GET'])
 def details():
+    username = session['username']
+    print(username)
+    result = db.session.query(Hospitals, Users).join(Users).filter(Hospitals.is_deleted == False, Users.username == username).all()
+    hospital_list = []
+    for hospital,user in result:        
+            hospital_dict=  {
+                'pk': hospital.id,
+                'name' : hospital.hospital_name,
+                'contact' : hospital.contact_number
+            }
+            hospital_list.append(hospital_dict) 
     """Hospital_Name = session['hospital_name'] """
 
     return render_template("details.html" , **locals())     
+
+@app.route("/updatehospital/<int:hospital_id>")
+def update_hospital(hospital_id):
+    
+    session['hospital_id'] = hospital_id
+    hospital = Hospitals.query.with_entities(Hospitals.hospital_name).filter_by(id = hospital_id, is_deleted = False).one()
+    hospital_name = hospital.hospital_name
+    session['hospital_name'] = hospital_name
+
+    return render_template("update_hospital.html", **locals())    
+
+
+
+@app.route('/patients', methods = ['POST','GET'])
+def patients():
+    hospital_id = session['hospital_id']
+    hospital_name = session['hospital_name']
+    """form = AddPatient()
+    
+
+
+    if form.validate_on_submit():
+        Hosp = Hospitals.query.filter_by(Username = user).first()
+        patient = Patients(Fname = form.Fname.data, Lname = form.Lname.data, Date = datetime.datetime.now(), DOB = form.DOB.data, Age = (datetime.datetime.now().year- form.DOB.data.year),  Gender = form.Gender.data, TestResult = form.TestResult.data, Status = form.TestResult.data ,hospitals = Hosp)
+        db.session.add(patient)
+        db.session.commit()
+        return redirect(url_for('details'))"""
+
+    return render_template("patients.html", **locals())
+
+
+@app.route('/hospitalbeds', methods = ['POST','GET'])
+def hospital_beds():
+    form = HospitalBeds()
+
+    hospital_id = session['hospital_id']
+    hospital_name = session['hospital_name']
+    hospital_beds = Hospitals.query.with_entities(Hospitals.total_capacity, Hospitals.icu_beds).filter_by(id = hospital_id, is_deleted = False).one()
+    total_capacity = hospital_beds.total_capacity
+    icu_beds = hospital_beds.icu_beds
+
+    if form.validate_on_submit():       
+        db.session.query(Hospitals).filter(Hospitals.id == hospital_id).update({Hospitals.total_capacity : form.total_capacity.data, Hospitals.icu_beds : form.icu_beds.data}, synchronize_session = False)
+        db.session.commit()
+        return redirect(url_for('hospital_beds'))
+    return render_template("hospital_beds.html", **locals())
+
+@app.route('/vaccinationstatus', methods = ['POST','GET'])
+def vaccination_status():
+    form = VaccinationStatus()
+
+    hospital_id = session['hospital_id']
+    hospital_name = session['hospital_name']
+    vaccination = Hospitals.query.with_entities(Hospitals.first_dose, Hospitals.second_dose, Hospitals.precautionary_dose).filter_by(id = hospital_id, is_deleted = False).one()
+    first_dose = vaccination.first_dose
+    second_dose = vaccination.second_dose
+    precautionary_dose = vaccination.precautionary_dose
+
+
+    if form.validate_on_submit():       
+        db.session.query(Hospitals).filter(Hospitals.id == hospital_id).update({Hospitals.first_dose : Hospitals.first_dose + form.first_dose.data, Hospitals.second_dose : Hospitals.second_dose + form.second_dose.data, Hospitals.precautionary_dose : Hospitals.precautionary_dose + form.precautionary_dose.data}, synchronize_session = False)
+        db.session.commit()
+        return redirect(url_for('vaccination_status'))
+
+    return render_template("vaccination_status.html", **locals())    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -184,19 +273,19 @@ def addpatient():
     return render_template("add_patient.html", **locals())
 
 
-
+"""
 @app.route('/vaccinationStatus', methods = ['POST','GET'])
 def UpdateVaccine():
-    """form = VaccinationStatus()
+    form = VaccinationStatus()
     user = session['username'] 
     Hospital_Name = session['hospital_name'] 
 
     if form.validate_on_submit():
         db.session.query(Hospitals).filter(Hospitals.Username == user).update({Hospitals.First_Dose : form.FirstDose.data, Hospitals.Second_Dose : form.SecondDose.data,Hospitals.Precautionary_Dose : form.PrecautionaryDose.data}, synchronize_session = False)
         db.session.commit()
-        return redirect(url_for('details'))"""
+        return redirect(url_for('details'))
     
-    return render_template("updatevaccine.html" ,  **locals())   
+    return render_template("updatevaccine.html" ,  **locals())  """ 
 
 
 @app.route('/updpatientstatus', methods = ['POST','GET'])

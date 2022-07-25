@@ -1,0 +1,26 @@
+{% extends "update_hospital.html" %}
+
+    {% block head %}
+    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}"-->
+
+    {% endblock %}
+
+  
+
+        {% block sub %}
+    
+        <div>
+            <h2  style="text-align: center;" >Patients</h2>
+            
+            <div>
+            
+    
+            </div>
+
+
+        </div>
+        
+        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+        {% endblock %}
+    
+ 

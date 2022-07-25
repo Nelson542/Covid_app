@@ -1,0 +1,51 @@
+{% extends "update_hospital.html" %}
+
+    {% block head %}
+    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}"-->
+
+    {% endblock %}
+
+  
+
+        {% block sub %}
+    
+        <div>
+            <h2  style="text-align: center;" > Vaccination Status</h2>
+            
+            <div>
+                <h3>First dose --> {{ first_dose }}</h3>
+                <h3>Second dose --> {{ second_dose }}</h3>   
+                <h3>Precautionary dose --> {{ precautionary_dose }}</h3>    
+            </div>
+
+            <div>
+                <form method = 'POST' >
+                    <legend>Update Vaccination Status</legend>
+                    {{ form.hidden_tag() }}
+                    
+                    <div>
+                       {{ form.first_dose.label }}<br>
+                       {{ form.first_dose }}
+                       <br>
+                       
+                       {{ form.second_dose.label }}<br>
+                       {{ form.second_dose }}
+                       <br>
+
+                       {{ form.precautionary_dose.label }}<br>
+                       {{ form.precautionary_dose }}
+                       <br>
+                   
+                       <br>
+                       {{ form.submit }}
+                    </div>        
+              </form>
+
+            </div>
+
+        </div>
+        
+        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+        {% endblock %}
+    
+ 

@@ -1,3 +1,4 @@
+from email.policy import default
 from covid_app import db
 from datetime import datetime
 from sqlalchemy import Date
@@ -16,11 +17,11 @@ class Hospitals(db.Model):
     hospital_name = db.Column(db.String(50),nullable = False)
     contact_number = db.Column(db.Integer, nullable = False)  
     user_id = db.Column(db.Integer,db.ForeignKey('users.id')) 
-    total_capacity = db.Column(db.Integer)
-    icu_beds = db.Column(db.Integer)
-    first_dose = db.Column(db.Integer)
-    second_dose = db.Column(db.Integer)
-    precautionary_dose = db.Column(db.Integer)
+    total_capacity = db.Column(db.Integer, default = 0)
+    icu_beds = db.Column(db.Integer,default = 0)
+    first_dose = db.Column(db.Integer, default = 0)
+    second_dose = db.Column(db.Integer,default = 0)
+    precautionary_dose = db.Column(db.Integer, default = 0)
     is_deleted = db.Column(db.Boolean, default=False)
     patients = db.relationship('Patients', backref = 'hospitals')
     

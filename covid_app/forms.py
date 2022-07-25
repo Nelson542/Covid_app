@@ -24,20 +24,17 @@ class AddHospital(FlaskForm):
     submit = SubmitField(label='Submit')
     
 
-class HospitalUpdate(FlaskForm):
+class HospitalBeds(FlaskForm):
 
-    TotalCapacity = IntegerField(label="TotalCapacity",validators=[DataRequired()])
-    ICU_Beds = IntegerField(label="ICU_Beds",validators=[DataRequired()])  
-    FirstDose = IntegerField(label="FirstDose")
-    SecondDose = IntegerField(label="SecondDose")
-    PrecautionaryDose = IntegerField(label="PrecautionaryDose")
+    total_capacity = IntegerField(label="TotalCapacity",validators=[DataRequired()])
+    icu_beds = IntegerField(label="ICU_Beds",validators=[DataRequired()])  
     submit = SubmitField(label='Submit')  
 
 class VaccinationStatus(FlaskForm):
  
-    FirstDose = IntegerField(label="FirstDose")
-    SecondDose = IntegerField(label="SecondDose")
-    PrecautionaryDose = IntegerField(label="PrecautionaryDose")
+    first_dose = IntegerField(label="FirstDose")
+    second_dose = IntegerField(label="SecondDose")
+    precautionary_dose = IntegerField(label="PrecautionaryDose")
     submit = SubmitField(label='Submit') 
 
 class AddPatient(FlaskForm):

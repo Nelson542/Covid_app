@@ -1,0 +1,47 @@
+{% extends "update_hospital.html" %}
+
+    {% block head %}
+    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}"-->
+
+    {% endblock %}
+
+  
+
+        {% block sub %}
+    
+        <div>
+            <h2  style="text-align: center;" > Hospital Beds Information</h2>
+            
+            <div>
+            <h3>Total number of beds in the Hospital --> {{ total_capacity}}</h3>
+            <h3>Total number of ICU beds in the Hospital --> {{ icu_beds}}</h3> 
+
+    
+            </div>
+            <div>
+                <form method = 'POST' >
+                    <legend>Update Hospital Beds</legend>
+                    {{ form.hidden_tag() }}
+                    
+                    <div>
+                       {{ form.total_capacity.label }}<br>
+                       {{ form.total_capacity }}
+                       <br>
+                       
+                       {{ form.icu_beds.label }}<br>
+                       {{ form.icu_beds }}
+                       <br>
+                   
+                       <br>
+                       {{ form.submit }}
+                    </div>        
+              </form>
+
+            </div>
+
+        </div>
+        
+        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+        {% endblock %}
+    
+ 
