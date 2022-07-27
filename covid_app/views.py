@@ -14,7 +14,8 @@ from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalBeds,Vacci
 @app.before_first_request
 def populate_db():
     if Users.query.filter_by(is_admin = True).first() is None:
-        admin = Users(username = "admin", password = "12345", is_admin = True)
+        admin = Users(username = "admin", is_admin = True)
+        admin.set_password("admin123")
         db.session.add(admin)
         db.session.commit()
 
@@ -40,13 +41,16 @@ def admin():
 
     if request.method == 'POST' and form.validate_on_submit():
     
-        if Users.query.filter_by(username = form.username.data,password = form.password.data, is_admin = True).first():
+        adminlog = Users.query.filter_by(username = form.username.data, is_admin = True).first()
+        userlog = Users.query.filter_by(username = form.username.data, is_admin = False).first()
+
+        if (adminlog and adminlog.check_password(form.password.data)) ==True:
             return redirect(url_for('hospitals'))
-        elif Users.query.filter_by(username = form.username.data,password = form.password.data, is_admin = False).first():
+        elif (userlog and userlog.check_password(form.password.data)) ==True:
             session['username']  = form.username.data
             return redirect(url_for('details'))
         else:
-            return redirect(url_for('admin'))               
+            return redirect(url_for('admin'))            
     return render_template('admin_login.html', **locals())   
 
 
@@ -86,13 +90,14 @@ def add_user():
     form = AddUser()
 
     if form.validate_on_submit():
-        exists = db.session.query(Users.id).filter_by(username = form.username.data,password = form.password.data).first()
-        if exists:
-            id = int(exists[0])
+        exists = Users.query.filter_by(username = form.username.data).one()
+        if (exists and exists.check_password(form.password.data)) ==True:
+            id = exists.id
             db.session.query(Users).filter(Users.id == id).update({Users.is_deleted : False}, synchronize_session = False)
             db.session.commit()
         else:    
-            user = Users(username = form.username.data,password = form.password.data, is_admin = False)
+            user = Users(username = form.username.data, is_admin = False)
+            user.set_password(form.password.data)
             db.session.add(user)
             db.session.commit()
         
