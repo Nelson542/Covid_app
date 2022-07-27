@@ -1,48 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add patient</title>
-</head>
-<body style="background-color:#888;">
+{% extends "update_hospital.html" %}
 
-    <form method = 'POST' >
-        <legend>Add patient</legend>
-        {{ form.hidden_tag() }}
-        
-        <div>
-            <br> 
-           {{ form.Fname.label }}<br>
-           {{ form.Fname }}
-           <br>
+    {% block head %}
+    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}"-->
 
-           <br> 
-           {{ form.Lname.label }}<br>
-           {{ form.Lname }}
-           <br>
+    {% endblock %}
 
-           <br> 
-           {{ form.DOB.label }}<br>
-           {{ form.DOB }}
-           <br>
+  
 
-           <br> 
-           {{ form.Gender.label }}<br>
-           {{ form.Gender }}
-           <br>
-
-           <br> 
-           {{ form.TestResult.label }}<br>
-           {{ form.TestResult }}
-           <br>
-           
-       
-           <br>
-           {{ form.submit }}
-        </div>        
-    </form>
+        {% block sub %}
     
-</body>
-</html>
+        <div>
+            <h2  style="text-align: center;" >Add  patient</h2>
+            
+            <div>
+                <form method = 'POST' >
+                    <legend>Add patient</legend>
+                    {{ form.hidden_tag() }}
+                    
+                    <div>
+                        <br> 
+                       {{ form.first_name.label }}<br>
+                       {{ form.first_name }}
+                       <br>
+            
+                       <br> 
+                       {{ form.last_name.label }}<br>
+                       {{ form.last_name }}
+                       <br>
+            
+                       <br> 
+                       {{ form.dob.label }}<br>
+                       {{ form.dob }}
+                       <br>
+            
+                       <br> 
+                       {{ form.unique_id.label }}<br>
+                       {{ form.unique_id }}
+                       <br>
+            
+                       <br> 
+                       {{ form.gender.label }}<br>
+                       {{ form.gender }}
+                       <br>
+            
+                       <br> 
+                       {{ form.test_result.label }}<br>
+                       {{ form.test_result }}
+                       <br>
+                       
+                   
+                       <br>
+                       {{ form.submit }}
+                    </div>        
+                </form>     
+            </div>
+
+
+
+
+
+
+            
+
+        </div>
+        
+        <a class="btn btn-outline-primary mr-1" href="{{url_for('patients')}}" role="button">Return to Home</a>
+        {% endblock %}
+    
+
+

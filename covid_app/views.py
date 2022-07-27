@@ -6,7 +6,7 @@ from flask import redirect, render_template, request, flash, session, url_for
 
 from covid_app import app , db
 
-from covid_app.models import Users,Hospitals,Patients
+from covid_app.models import Users,Hospitals,Patients,CovidTest
 
 from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalBeds,VaccinationStatus,AddPatient, UpdatePatientLogin, UpdatePatientStatus
 
@@ -90,11 +90,12 @@ def add_user():
     form = AddUser()
 
     if form.validate_on_submit():
-        exists = Users.query.filter_by(username = form.username.data).one()
-        if (exists and exists.check_password(form.password.data)) ==True:
-            id = exists.id
-            db.session.query(Users).filter(Users.id == id).update({Users.is_deleted : False}, synchronize_session = False)
-            db.session.commit()
+        if Users.query.filter_by(username = form.username.data).all():
+            exists = Users.query.filter_by(username = form.username.data).one()
+            if (exists and exists.check_password(form.password.data)) ==True:
+                id = exists.id
+                db.session.query(Users).filter(Users.id == id).update({Users.is_deleted : False}, synchronize_session = False)
+                db.session.commit()
         else:    
             user = Users(username = form.username.data, is_admin = False)
             user.set_password(form.password.data)
@@ -182,18 +183,42 @@ def update_hospital(hospital_id):
 def patients():
     hospital_id = session['hospital_id']
     hospital_name = session['hospital_name']
-    """form = AddPatient()
-    
+   
+        
+    return render_template("patients.html", **locals())
 
+@app.route('/addpatient', methods = ['POST','GET'])
+def add_patient():
+    form = AddPatient()
+    hospital_id = session['hospital_id']
+    hospital_name = session['hospital_name']
+    hospital = Hospitals.query.filter_by(id = hospital_id).one()
 
     if form.validate_on_submit():
-        Hosp = Hospitals.query.filter_by(Username = user).first()
-        patient = Patients(Fname = form.Fname.data, Lname = form.Lname.data, Date = datetime.datetime.now(), DOB = form.DOB.data, Age = (datetime.datetime.now().year- form.DOB.data.year),  Gender = form.Gender.data, TestResult = form.TestResult.data, Status = form.TestResult.data ,hospitals = Hosp)
-        db.session.add(patient)
-        db.session.commit()
-        return redirect(url_for('details'))"""
+        if Patients.query.filter_by(first_name = form.first_name.data, last_name = form.last_name.data,dob = form.dob.data, is_deleted = False).all():
+            exists = Patients.query.filter_by(first_name = form.first_name.data, last_name = form.last_name.data,dob = form.dob.data, is_deleted = False).one()
+            if (exists and exists.check_id(str(form.unique_id.data))) ==True:
+                id = exists.id
+                db.session.query(Patients).filter(Patients.id == id).update({Patients.status : form.test_result.data, Patients.is_deleted : False}, synchronize_session = False)            
+                db.session.query(CovidTest).filter(CovidTest.patient_id == id).update({CovidTest.is_current : False}, synchronize_session = False)            
+                test = CovidTest(date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = exists )
+                db.session.add(test)
+                db.session.commit()
+        else:    
+            patient = Patients(first_name = form.first_name.data, last_name = form.last_name.data, dob = form.dob.data, age = (datetime.datetime.now().year- form.dob.data.year), gender = form.gender.data, status = form.test_result.data)
+            patient.set_id(str(form.unique_id.data))
+            db.session.add(patient)
+            test = CovidTest(date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+            db.session.add(test)
+            db.session.commit()    
 
-    return render_template("patients.html", **locals())
+        return redirect(url_for('patients'))
+
+    
+
+    return render_template("add_patient.html", **locals())
+
+
 
 
 @app.route('/hospitalbeds', methods = ['POST','GET'])
@@ -262,7 +287,7 @@ def Updatehospital():
     return render_template("UpdateHospital.html", **locals())
 
 
-@app.route('/addpatient', methods = ['POST','GET'])
+@app.route('/add_patient', methods = ['POST','GET'])
 def addpatient():
     """form = AddPatient()
     user = session['username']

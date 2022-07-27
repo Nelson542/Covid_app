@@ -5,46 +5,47 @@ from wtforms.validators import EqualTo,DataRequired, Length
 
 class AdminLogin(FlaskForm):
 
-    username = StringField(label="Name",validators=[DataRequired()])
-    password = PasswordField(label="Password",validators=[DataRequired()])
-    submit = SubmitField(label='Submit')
+    username = StringField(label="username",validators=[DataRequired()])
+    password = PasswordField(label="password",validators=[DataRequired()])
+    submit = SubmitField(label='submit')
 
 class AddUser(FlaskForm):
 
-    username = StringField(label="Name",validators=[DataRequired()])
-    password = PasswordField(label="Password",validators=[DataRequired()])
-    submit = SubmitField(label='Submit')
+    username = StringField(label="username",validators=[DataRequired()])
+    password = PasswordField(label="password",validators=[DataRequired()])
+    submit = SubmitField(label='submit')
 
 
 class AddHospital(FlaskForm):
 
-    hospital_name = StringField(label="Hospital Name",validators=[DataRequired()])
-    contact_number = IntegerField(label="Contact Number",validators=[DataRequired()])
-    user = SelectField(label = 'User',coerce=str,validators=[DataRequired()]) 
-    submit = SubmitField(label='Submit')
+    hospital_name = StringField(label="hospital_name",validators=[DataRequired()])
+    contact_number = IntegerField(label="contact_number",validators=[DataRequired()])
+    user = SelectField(label = 'user',coerce=str,validators=[DataRequired()]) 
+    submit = SubmitField(label='submit')
     
 
 class HospitalBeds(FlaskForm):
 
-    total_capacity = IntegerField(label="TotalCapacity",validators=[DataRequired()])
-    icu_beds = IntegerField(label="ICU_Beds",validators=[DataRequired()])  
-    submit = SubmitField(label='Submit')  
+    total_capacity = IntegerField(label="total_capacity",validators=[DataRequired()])
+    icu_beds = IntegerField(label="icu_beds",validators=[DataRequired()])  
+    submit = SubmitField(label='submit')  
 
 class VaccinationStatus(FlaskForm):
  
-    first_dose = IntegerField(label="FirstDose")
-    second_dose = IntegerField(label="SecondDose")
-    precautionary_dose = IntegerField(label="PrecautionaryDose")
-    submit = SubmitField(label='Submit') 
+    first_dose = IntegerField(label="first_dose")
+    second_dose = IntegerField(label="second_dose")
+    precautionary_dose = IntegerField(label="precautionary_dose")
+    submit = SubmitField(label='submit') 
 
 class AddPatient(FlaskForm):
  
-    Fname = StringField(label="FirstName",validators=[DataRequired()])
-    Lname = StringField(label="LastName",validators=[DataRequired()])
-    DOB = DateField(label ="DOB", format='%Y-%m-%d', validators=[DataRequired()])
-    Gender = RadioField(label ="Gender", choices = [('M','Male'),('F','Female')]) 
-    TestResult = SelectField(label = 'TestResult', choices = [('-ve', 'Negative'),('+ve', 'Positive')]) 
-    submit = SubmitField(label='Submit')     
+    first_name = StringField(label="first_name",validators=[DataRequired()])
+    last_name = StringField(label="last_name",validators=[DataRequired()])
+    dob = DateField(label ="dob", format='%Y-%m-%d', validators=[DataRequired()])
+    gender = RadioField(label ="gender", choices = [('M','Male'),('F','Female')]) 
+    unique_id = IntegerField(label="unique_id", validators=[DataRequired()])
+    test_result = SelectField(label = 'test_result', choices = [('negative', 'Negative'),('positive', 'Positive')]) 
+    submit = SubmitField(label='submit')     
 
 class UpdatePatientLogin(FlaskForm):
  
