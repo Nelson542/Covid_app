@@ -12,6 +12,12 @@
         <div>
             <h2  style="text-align: center;" >Add  patient</h2>
             
+
+            {% if error %}  
+                <h2><strong>Error</strong>: {{error}}</h2>  
+            {% endif %} 
+
+
             <div>
                 <form method = 'POST' >
                     <legend>Add patient</legend>
@@ -54,8 +60,6 @@
                     </div>        
                 </form>     
             </div>
-
-
 
 
 

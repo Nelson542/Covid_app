@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField , IntegerField, SubmitField,PasswordField,RadioField, DateField,SelectField, BooleanField
-from wtforms.validators import EqualTo,DataRequired, Length
+from wtforms.validators import EqualTo,DataRequired, Length,  ValidationError 
 
 
 class AdminLogin(FlaskForm):
@@ -43,18 +43,15 @@ class AddPatient(FlaskForm):
     last_name = StringField(label="last_name",validators=[DataRequired()])
     dob = DateField(label ="dob", format='%Y-%m-%d', validators=[DataRequired()])
     gender = RadioField(label ="gender", choices = [('M','Male'),('F','Female')]) 
-    unique_id = IntegerField(label="unique_id", validators=[DataRequired()])
+    unique_id = StringField(label="unique_id", validators=[DataRequired()])
     test_result = SelectField(label = 'test_result', choices = [('negative', 'Negative'),('positive', 'Positive')]) 
-    submit = SubmitField(label='submit')     
+    submit = SubmitField(label='submit')  
 
-class UpdatePatientLogin(FlaskForm):
- 
-    Fname = StringField(label="FirstName",validators=[DataRequired()])
-    Lname = StringField(label="LastName",validators=[DataRequired()])
-    DOB = DateField(label ="DOB", format='%Y-%m-%d', validators=[DataRequired()]) 
-    submit = SubmitField(label='Submit')                
 
 class UpdatePatientStatus(FlaskForm):
-    Status = RadioField(label = 'Status', choices = [('+ve', 'Positive'),('Recovered', 'Recovered'),('Deceased', 'Deceased')])  
-    submit = SubmitField(label='Submit') 
+    status = SelectField(label = 'status', choices = [('negative', 'Negative'),('positive', 'Positive')]) 
+    submit = SubmitField(label='submit')    
+
+
+
 

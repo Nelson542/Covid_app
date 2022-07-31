@@ -1,8 +1,9 @@
 {% extends "update_hospital.html" %}
 
     {% block head %}
-    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}"-->
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/patients.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='/js/patients.js') }}"></script>
+    <script type="text/javascript" src="/jquery/jquery-3.6.0.min.js"></script>
     {% endblock %}
 
   
@@ -12,20 +13,63 @@
         <div>
             <h2  style="text-align: center;" >Patients</h2>
             
+            {% with messages = get_flashed_messages() %}  
+            {% if messages %}  
+                    {% for message in messages %}  
+                        <h4 style="text-align: center;">{{ message }}</h4>  
+                    {% endfor %}  
+                {% endif %}  
+            {% endwith %}  
+
+
             <div>
                 <a class="btn btn-outline-primary mr-1 " href="{{url_for('add_patient')}}" role="button">Add Patient</a>     
             </div>
 
+            <div class="container">
 
-
-
-
-
-            
+                
+                <input type="text" id="myInput" onkeyup="search()" placeholder="Search for patients.." title="Type in a name">
+                
+                
+                <div class="table-responsive col-md-6">
+                    <h2 class="sub-header" style="text-align:center;">Patients</h2>
+                    <table class="table css-serial "  id="myTable"  >
+                        <thead>
+                        <tr>
+                            <th scope="col">Sl No</th>               
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">DOB</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                        </thead>
+                        {% if patient_list%}
+                            {% for key,value in patient_df.iterrows() %}               
+                            <tr>
+                                <td></td>
+                                <td>{{ value['first_name'] }}</td>                            
+                                <td>{{ value['last_name'] }}</td>
+                                <td>{{ value['dob'] }}</td>
+                                <td>{{ value['status'] }}</td>                           
+                                <td><a  href="{{url_for('patient_display',patient_pk=value['pk'])}}" class="btn btn-outline-primary" role="button">View</a></td>
+                                
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                            
+                    </table>
+                </div>
+               
+            </div>    
 
         </div>
         
         <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+
+
+
+        
         {% endblock %}
     
  

@@ -35,7 +35,7 @@
                             <th scope="col">Admin Name</th>
                         </tr>
                         </thead>
-                        
+                        {% if user_list%}
                         {% for key,value in user_df.iterrows() %}               
                         <tr>
                             <td></td>
@@ -44,6 +44,7 @@
                             
                         </tr>
                         {% endfor %}
+                        {% endif %}
                             
                     </table>
                 </div>
@@ -61,7 +62,7 @@
                             <th scope="col">Admin</th>
                         </tr>
                         </thead>
-                        
+                        {% if hospital_list%}
                         {% for key,value in hospital_df.iterrows() %} 
                             {% if value['is_deleted'] == False %}              
                             <tr>
@@ -76,7 +77,7 @@
                             </tr>
                             {% endif %}
                         {% endfor %}
-                            
+                        {% endif %}   
                     </table>
                 </div>
               </div>

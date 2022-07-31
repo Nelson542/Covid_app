@@ -1,23 +1,33 @@
 import pandas as pd
 from psycopg2 import Date
 import datetime
-from sqlalchemy import update, cast , Date
+from sqlalchemy import update, cast , Date, desc
 from flask import redirect, render_template, request, flash, session, url_for
 
 from covid_app import app , db
-
 from covid_app.models import Users,Hospitals,Patients,CovidTest
-
-from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalBeds,VaccinationStatus,AddPatient, UpdatePatientLogin, UpdatePatientStatus
+from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalBeds,VaccinationStatus,AddPatient,UpdatePatientStatus
 
 
 @app.before_first_request
 def populate_db():
     if Users.query.filter_by(is_admin = True).first() is None:
-        admin = Users(username = "admin", is_admin = True)
-        admin.set_password("admin123")
+        admin_password = "admin123"
+        admin_password_hash = encrypt(admin_password)
+        admin = Users(username = "admin",password = admin_password_hash, is_admin = True)
         db.session.add(admin)
         db.session.commit()
+
+def encrypt(id):
+    s = 28
+    result = ""   
+    for i in range(len(id)):
+        char = id[i]
+        if (char.isupper()):
+            result += chr((ord(char) + s-65) % 26 + 65)
+        else:
+            result += chr((ord(char) + s - 97) % 26 + 97)           
+    return result
 
 
 @app.route('/', methods = ['POST','GET'])
@@ -40,13 +50,14 @@ def admin():
     form = AdminLogin()    
 
     if request.method == 'POST' and form.validate_on_submit():
-    
-        adminlog = Users.query.filter_by(username = form.username.data, is_admin = True).first()
-        userlog = Users.query.filter_by(username = form.username.data, is_admin = False).first()
+        
+        password_hash = encrypt(str(form.password.data))
+        #adminlog = Users.query.filter_by(username = form.username.data, password = password_hash, is_admin = True).first()
+        #userlog = Users.query.filter_by(username = form.username.data,password = password_hash, is_admin = False).first()
 
-        if (adminlog and adminlog.check_password(form.password.data)) ==True:
+        if Users.query.filter_by(username = form.username.data, password = password_hash, is_admin = True).first():
             return redirect(url_for('hospitals'))
-        elif (userlog and userlog.check_password(form.password.data)) ==True:
+        elif Users.query.filter_by(username = form.username.data,password = password_hash, is_admin = False).first():
             session['username']  = form.username.data
             return redirect(url_for('details'))
         else:
@@ -90,15 +101,14 @@ def add_user():
     form = AddUser()
 
     if form.validate_on_submit():
-        if Users.query.filter_by(username = form.username.data).all():
-            exists = Users.query.filter_by(username = form.username.data).one()
-            if (exists and exists.check_password(form.password.data)) ==True:
-                id = exists.id
-                db.session.query(Users).filter(Users.id == id).update({Users.is_deleted : False}, synchronize_session = False)
-                db.session.commit()
+        password_hash = encrypt(str(form.password.data))
+        if Users.query.filter_by(username = form.username.data, password = password_hash).all():
+            exists = Users.query.filter_by(username = form.username.data, password = password_hash).one()
+            id = exists.id
+            db.session.query(Users).filter(Users.id == id).update({Users.is_deleted : False}, synchronize_session = False)
+            db.session.commit()
         else:    
-            user = Users(username = form.username.data, is_admin = False)
-            user.set_password(form.password.data)
+            user = Users(username = form.username.data,password = password_hash, is_admin = False)
             db.session.add(user)
             db.session.commit()
         
@@ -183,9 +193,74 @@ def update_hospital(hospital_id):
 def patients():
     hospital_id = session['hospital_id']
     hospital_name = session['hospital_name']
-   
-        
+
+    result = db.session.query(CovidTest, Patients).join(Patients).filter(CovidTest.hospital_id == hospital_id).distinct(Patients.id).all()
+
+    patient_list = []
+    for test,patients in result:        
+            patient=  {
+                'pk' : patients.id,
+                'date_added' : test.date_added,
+                'first_name' : patients.first_name,
+                'last_name': patients.last_name,
+                'age': patients.age,
+                'dob': patients.dob.date(),
+                'gender': patients.gender,
+                'status': patients.status           
+            }
+            patient_list.append(patient) 
+    if patient_list:        
+        patient_df = pd.DataFrame(patient_list).sort_values(by='date_added',ascending=False ) 
+ 
     return render_template("patients.html", **locals())
+
+
+@app.route("/patientdisplay/<int:patient_pk>", methods = ['GET','POST'])
+def patient_display(patient_pk):
+    form  = UpdatePatientStatus()
+
+    patient_id = patient_pk
+    session['patient_id'] = patient_id
+    hospital_id = session['hospital_id']
+    hospital_name = session['hospital_name']
+    hospital = Hospitals.query.filter_by(id = hospital_id).one()
+    patient = Patients.query.filter_by(id = patient_id).one()
+
+    patient_first_name = patient.first_name
+    patient_last_name = patient.last_name
+    patient_dob = patient.dob.date()
+    patient_age = patient.age
+    patient_gender = patient.gender
+    patient_status = patient.status
+
+    if request.method == "POST":
+        status = request.form.get('status')
+        #print(select)
+        db.session.query(Patients).filter(Patients.id == patient_id).update({Patients.status : status}, synchronize_session = False)
+        db.session.query(CovidTest).filter(CovidTest.patient_id == patient_id).update({CovidTest.is_current : False}, synchronize_session = False)            
+        db.session.commit()
+        if patient_status == "positive" and status == "negative":                  
+            test = CovidTest(test_result = status, is_recovered = True, date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+            db.session.add(test)
+            db.session.commit()
+        
+        elif status == "deceased":
+            test = CovidTest(test_result = status,is_deceased = True,date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+            db.session.add(test)
+            db.session.commit()
+
+        else: 
+            test = CovidTest(test_result = status,date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+            db.session.add(test)
+            db.session.commit() 
+
+            
+
+        return redirect(url_for('patients'))  
+
+    return render_template("patient_display.html", **locals())
+
+
 
 @app.route('/addpatient', methods = ['POST','GET'])
 def add_patient():
@@ -193,27 +268,40 @@ def add_patient():
     hospital_id = session['hospital_id']
     hospital_name = session['hospital_name']
     hospital = Hospitals.query.filter_by(id = hospital_id).one()
-
+    
     if form.validate_on_submit():
-        if Patients.query.filter_by(first_name = form.first_name.data, last_name = form.last_name.data,dob = form.dob.data, is_deleted = False).all():
-            exists = Patients.query.filter_by(first_name = form.first_name.data, last_name = form.last_name.data,dob = form.dob.data, is_deleted = False).one()
-            if (exists and exists.check_id(str(form.unique_id.data))) ==True:
-                id = exists.id
-                db.session.query(Patients).filter(Patients.id == id).update({Patients.status : form.test_result.data, Patients.is_deleted : False}, synchronize_session = False)            
+        unique_id_hash = encrypt(str(form.unique_id.data))
+    
+        if Patients.query.filter_by(first_name = form.first_name.data, last_name = form.last_name.data,dob = form.dob.data,unique_id = unique_id_hash, gender = form.gender.data).all():
+            exists = Patients.query.filter_by(first_name = form.first_name.data, last_name = form.last_name.data,dob = form.dob.data,unique_id = unique_id_hash).one()
+            id = exists.id
+            status = exists.status
+            if status == "positive" and form.test_result.data == "negative":
+                db.session.query(Patients).filter(Patients.id == id).update({Patients.status : form.test_result.data}, synchronize_session = False)            
                 db.session.query(CovidTest).filter(CovidTest.patient_id == id).update({CovidTest.is_current : False}, synchronize_session = False)            
-                test = CovidTest(date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = exists )
+                test = CovidTest(test_result = form.test_result.data, is_recovered = True , date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = exists )
                 db.session.add(test)
                 db.session.commit()
-        else:    
-            patient = Patients(first_name = form.first_name.data, last_name = form.last_name.data, dob = form.dob.data, age = (datetime.datetime.now().year- form.dob.data.year), gender = form.gender.data, status = form.test_result.data)
-            patient.set_id(str(form.unique_id.data))
-            db.session.add(patient)
-            test = CovidTest(date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
-            db.session.add(test)
-            db.session.commit()    
+            else: 
+                db.session.query(Patients).filter(Patients.id == id).update({Patients.status : form.test_result.data}, synchronize_session = False)            
+                db.session.query(CovidTest).filter(CovidTest.patient_id == id).update({CovidTest.is_current : False}, synchronize_session = False)            
+                test = CovidTest(test_result = form.test_result.data,  date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = exists )
+                db.session.add(test)
+                db.session.commit() 
+
+        else:
+            if Patients.query.filter_by(unique_id = unique_id_hash).first():
+                flash('Unique id already exists!!!')
+                return redirect(url_for('patients'))
+            else:    
+                patient = Patients(first_name = form.first_name.data, last_name = form.last_name.data, dob = form.dob.data,unique_id = unique_id_hash, age = (datetime.datetime.now().year- form.dob.data.year), gender = form.gender.data, status = form.test_result.data)
+                db.session.add(patient)
+                db.session.commit()
+                test = CovidTest(test_result = form.test_result.data, date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+                db.session.add(test)
+                db.session.commit() 
 
         return redirect(url_for('patients'))
-
     
 
     return render_template("add_patient.html", **locals())
@@ -270,138 +358,6 @@ def vaccination_status():
 
 
 
-
-
-
-@app.route('/updHospDetails', methods = ['POST','GET'])
-def Updatehospital():
-    """form = HospitalUpdate()
-    user = session['username'] 
-    Hospital_Name = session['hospital_name']
-    
-    if form.validate_on_submit():       
-        db.session.query(Hospitals).filter(Hospitals.Username == user).update({Hospitals.TotalCapacity : form.TotalCapacity.data, Hospitals.ICU_Beds : form.ICU_Beds.data}, synchronize_session = False)
-        db.session.commit()
-        return redirect(url_for('details'))"""
-
-    return render_template("UpdateHospital.html", **locals())
-
-
-@app.route('/add_patient', methods = ['POST','GET'])
-def addpatient():
-    """form = AddPatient()
-    user = session['username']
-    Hospital_Name = session['hospital_name'] 
-
-    if form.validate_on_submit():
-        Hosp = Hospitals.query.filter_by(Username = user).first()
-        patient = Patients(Fname = form.Fname.data, Lname = form.Lname.data, Date = datetime.datetime.now(), DOB = form.DOB.data, Age = (datetime.datetime.now().year- form.DOB.data.year),  Gender = form.Gender.data, TestResult = form.TestResult.data, Status = form.TestResult.data ,hospitals = Hosp)
-        db.session.add(patient)
-        db.session.commit()
-        return redirect(url_for('details'))"""
-
-    return render_template("add_patient.html", **locals())
-
-
-"""
-@app.route('/vaccinationStatus', methods = ['POST','GET'])
-def UpdateVaccine():
-    form = VaccinationStatus()
-    user = session['username'] 
-    Hospital_Name = session['hospital_name'] 
-
-    if form.validate_on_submit():
-        db.session.query(Hospitals).filter(Hospitals.Username == user).update({Hospitals.First_Dose : form.FirstDose.data, Hospitals.Second_Dose : form.SecondDose.data,Hospitals.Precautionary_Dose : form.PrecautionaryDose.data}, synchronize_session = False)
-        db.session.commit()
-        return redirect(url_for('details'))
-    
-    return render_template("updatevaccine.html" ,  **locals())  """ 
-
-
-@app.route('/updpatientstatus', methods = ['POST','GET'])
-def UpdatePatientLog():
-    """form = UpdatePatientLogin()
-    hosp_id = session['id']
-    Hospital_Name = session['hospital_name'] 
-    
-    if form.validate_on_submit():
-        Fname_Lname_DOB = Patients.query.with_entities(Patients.Fname, Patients.Lname, Patients.DOB, Patients.id, Patients.Status).filter_by(Hosp_id = hosp_id).all()
-        
-        for item in Fname_Lname_DOB:
-            if ((item[0] == form.Fname.data) and (item[1] == form.Lname.data) and (item[2].date() == form.DOB.data)):
-                session['patient_Fname'] = item[0]
-                session['patient_Lname'] = item[1]
-                session['patient_id'] = item[3]
-                session['status'] = item[4]
-
-                return redirect(url_for('statusupdate'))
-        else:
-            flash('Enter correct values')
-            return redirect(url_for('UpdatePatientLog'))    """
-
-    return render_template("UpdatePatientLogin.html", **locals())
-
-
-@app.route('/statusupdate', methods = ['POST','GET'])
-def statusupdate():
-    """form = UpdatePatientStatus()
-    
-    patient_Fname=session['patient_Fname'] 
-    patient_Lname= session['patient_Lname']
-    status = session['status']
-    patient_id = session['patient_id']
-    Hospital_Name = session['hospital_name'] 
-
-    
-    if request.method == 'POST' and form.validate_on_submit():
-        if form.Status.data == '+ve':
-            db.session.query(Patients).filter(Patients.id == patient_id).update({Patients.Status : form.Status.data, Patients.TestResult : form.Status.data}, synchronize_session = False)
-            db.session.commit()
-            return redirect(url_for('details'))
-        elif form.Status.data == 'Recovered':
-            db.session.query(Patients).filter(Patients.id == patient_id).update({Patients.Status : '-ve'}, synchronize_session = False)
-            db.session.commit()
-            return redirect(url_for('details'))
-        elif form.Status.data == 'Deceased':
-            db.session.query(Patients).filter(Patients.id == patient_id).update({Patients.Status : 'Deceased'}, synchronize_session = False)
-            db.session.commit()
-            return redirect(url_for('details'))   """ 
-        
-    
-    return render_template("StatusUpdate.html" ,  **locals())
-
-
-
-
-
-
-
-
-
-
-
-"""
-admin_name,admin_password) = Users.query.with_entities(Users.username,Users.password).filter_by(is_admin = True).first()
-    
-
-    if request.method == 'POST' and form.validate_on_submit():
-        users = Users.query.with_entities(Users.id,Users.username,Users.password).filter_by(is_admin = False, username = form.username.data).first()
-        print(users)
-        if result:
-            (id,hospital_name,username,password) = result
-        if form.username.data == admin_name and form.password.data == admin_password:
-            return redirect(url_for('hospitals'))
-        elif users and form.password.data == password:
-            session['id']  = id
-            session['hospital_name']  = hospital_name
-            session['username']  = username
-            session['password']  = password
-            return redirect(url_for('details'))
-        else:
-            return redirect(url_for('admin'))
-
-
-"""
 
 
 

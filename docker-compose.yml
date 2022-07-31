@@ -18,6 +18,7 @@ services:
     env_file: .env
 
   pgadmin:
+  
           image: dpage/pgadmin4
           environment: 
               - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin4.org

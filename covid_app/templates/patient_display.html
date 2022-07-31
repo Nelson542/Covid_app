@@ -1,0 +1,44 @@
+{% extends "update_hospital.html" %}
+
+    {% block head %}
+    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/patients.css') }}"-->
+
+    {% endblock %}
+
+  
+
+        {% block sub %}
+    
+        <div>
+            <h2  style="text-align: center;" >{{ Patient }}</h2>
+        </div>
+
+        <div>
+            <h4>First name --> {{ patient_first_name }}</h4>
+            <h4>Last name --> {{ patient_last_name }}</h4>
+            <h4>DOB --> {{ patient_dob}}</h4>
+            <h4>Age --> {{ patient_age }}</h4>
+            <h4>Gender --> {{ patient_gender }}</h4> 
+            <h4>Status --> {{ patient_status }}</h4>                      
+        </div>
+
+        
+            
+            <form class="form-inline" method="POST">
+                <select name="status" id="status">
+                    <option value="" disabled="disabled">Update Status</option>  
+                    <option value="negative">Negative</option>
+                    <option value="positive">Positive</option>
+                    <option value="deceased">Deceased</option>           
+                </select>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </div>
+
+            </form>    
+           
+        
+        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+        {% endblock %}
+    
+ 
