@@ -13,6 +13,16 @@
             <h2  style="text-align: center;" >{{ Patient }}</h2>
         </div>
 
+        {% with messages = get_flashed_messages() %}
+         {% if messages %}
+            <ul>
+               {% for message in messages %}
+               <li>{{ message }}</li>
+               {% endfor %}
+            </ul>
+         {% endif %}
+        {% endwith %}
+
         <div>
             <h4>First name --> {{ patient_first_name }}</h4>
             <h4>Last name --> {{ patient_last_name }}</h4>

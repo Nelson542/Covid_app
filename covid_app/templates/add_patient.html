@@ -13,11 +13,21 @@
             <h2  style="text-align: center;" >Add  patient</h2>
             
 
-            {% if error %}  
-                <h2><strong>Error</strong>: {{error}}</h2>  
+            {% if error %}
+                <p><strong>Error:</strong> {{ error }}
             {% endif %} 
+            
+            {% with messages = get_flashed_messages() %}
+         {% if messages %}
+            <ul>
+               {% for message in messages %}
+               <li>{{ message }}</li>
+               {% endfor %}
+            </ul>
+         {% endif %}
+        {% endwith %}
 
-
+            
             <div>
                 <form method = 'POST' >
                     <legend>Add patient</legend>
@@ -68,7 +78,7 @@
 
         </div>
         
-        <a class="btn btn-outline-primary mr-1" href="{{url_for('patients')}}" role="button">Return to Home</a>
+        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
         {% endblock %}
     
 

@@ -37,6 +37,12 @@ class VaccinationStatus(FlaskForm):
     precautionary_dose = IntegerField(label="precautionary_dose")
     submit = SubmitField(label='submit') 
 
+
+class PatientSearch(FlaskForm):
+    unique_id = StringField(label="unique_id", validators=[DataRequired()]) 
+    submit = SubmitField(label='submit')    
+
+
 class AddPatient(FlaskForm):
  
     first_name = StringField(label="first_name",validators=[DataRequired()])

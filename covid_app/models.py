@@ -50,5 +50,10 @@ class CovidTest(db.Model):
     is_deceased = db.Column(db.Boolean, default=False)
     is_current = db.Column(db.Boolean, default=True)
 
+class ActivePatients(db.Model):
+    id = db.Column(db.Integer, primary_key = True )
+    date_added = db.Column(db.DateTime)
+    active_count = db.Column(db.Integer)   
+
 
         

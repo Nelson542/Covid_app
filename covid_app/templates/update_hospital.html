@@ -13,12 +13,18 @@
         <h2  style="text-align: center;" >Welcome to {{ hospital_name.title() }} Hospital portal</h2>
       </div>  
         {% block sub %}
+
+        
+
         <div>
-          <a class="btn btn-outline-primary mr-1 " href="{{url_for('patients')}}" role="button">Patients</a>            
+          <a class="btn btn-outline-primary mr-1 " href="{{url_for('add_patient')}}" role="button">Add Patient</a> 
+          <a class="btn btn-outline-primary mr-1 " href="{{url_for('update_patient')}}" role="button">View and Update Patient</a>            
           <a class="btn btn-outline-primary mr-1 " href="{{url_for('hospital_beds')}}" role="button">Hospital Bed Info</a>            
           <a class="btn btn-outline-primary mr-1 " href="{{url_for('vaccination_status')}}" role="button">Vaccination Status</a>            
   
         </div>
+
+       
 
         
         {% endblock %}

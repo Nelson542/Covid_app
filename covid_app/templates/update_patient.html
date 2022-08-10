@@ -12,21 +12,30 @@
     
         <div>
             <h2  style="text-align: center;" >Patients</h2>
-            
-            {% with messages = get_flashed_messages() %}  
-            {% if messages %}  
-                    {% for message in messages %}  
-                        <h4 style="text-align: center;">{{ message }}</h4>  
-                    {% endfor %}  
-                {% endif %}  
-            {% endwith %}  
+              
 
+            {% if error %}  
+                <h2><strong>Error</strong>: {{error}}</h2>  
+            {% endif %}
 
             <div>
-                <a class="btn btn-outline-primary mr-1 " href="{{url_for('add_patient')}}" role="button">Add Patient</a>     
+                <form method = 'POST' >
+                    <legend>Enter Unique ID</legend>
+                    {{ form.hidden_tag() }}
+                    
+                    <div>
+                        <br> 
+                       {{ form.unique_id.label }}<br>
+                       {{ form.unique_id }}
+                       <br>
+                   
+                       <br>
+                       {{ form.submit }}
+                    </div>        
+                </form>          
             </div>
 
-            <div class="container">
+            <!--div class="container">
 
                 
                 <input type="text" id="myInput" onkeyup="search()" placeholder="Search for patients.." title="Type in a name">
@@ -61,7 +70,7 @@
                     </table>
                 </div>
                
-            </div>    
+            </div-->    
 
         </div>
         
