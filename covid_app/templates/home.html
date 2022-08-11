@@ -65,41 +65,93 @@
         
 		<aside class="sidebar">
 			<h3>Dashboard</h3>
-            
-            
-			
+                        
 			<nav class="menu">
-				<a href="#" class="menu-item is-active">Home</a>
-				<a href="#" class="menu-item">Hospitals</a>
-				<a href="#" class="menu-item">Infection Summary</a>
-                <a href="#" class="menu-item">Testing Summary</a>
+				<a href="#home" class="menu-item ">Home</a>
+				<a href="#hospitals" class="menu-item">Hospitals</a>
+				<a href="#infection_summary" class="menu-item">Infection Summary</a>
+                <a href="#testing_summary" class="menu-item">Testing Summary</a>
 				<a href="#" class="menu-item">Age wise and <br>Gender wise Summary</a>
-                <a href="#test" class="menu-item">Vaccination Coverage</a>
+                <a href="#" class="menu-item">Vaccination Coverage</a>
 			</nav>
             
             <a href="/admin" class="btn btn-outline-primary" role="button">Login</a>
-           
-
 		</aside>
         
         
-		<main class="content">
-            
-			<h2>COVID-19 Tracker</h2>
+		<main class="content" id = "home">
             
 			
+            <div > 
+                <h2 style="text-align:center;">COVID-19 Tracker</h2>
+               
+                <div class="row">
+                    <div class ="confirmed col-md-6" id="confirmed"></div>
+                    <div class ="active col-md-6" id="active"></div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class ="recovered col-md-6" id="recovered"></div>
+                    <div class ="deceased col-md-6" id="deceased"></div>
+                </div>
+            </div> 
+
+            <hr>
+            <hr>
+            
+            <div id = "hospitals">    
+                <h2 style="text-align:center;">Hospitals</h2>
+               
+                <table class="table css-serial" >
+                    <thead>
+                      <tr class="first" style="text-align:center;font-family:'Times New Roman', Times, serif;color:#ffffff;">
+                        <th>ID</th>
+                        <th>Hospital Name</th>
+                        <th>Contact Number</th>
+                        <th>Total Capacity</th>
+                        <th>ICU Beds</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for value in hospital_details %}
+                        <tr style="text-align:center;font-family:Jura;color:rgb(255, 253, 253);font-weight: 600;">
+                            <td></td>
+                            <td data-label="Hospital Name"> {{ value[0] }}</td>
+                            <td data-label="Contact Number"> {{ value[1] }}</td>
+                            <td data-label="Total Capacity"> {{ value[2] }}</td>
+                            <td data-label="ICU Beds"> {{ value[3] }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+            </div> 
+
+            <hr>
+            <hr>
+
+            <div id = "infection_summary">
+                <h2 style="text-align:center;">Infection Summary</h2>
+
+                <div class="row">
+                    <div class ="infection col-md-12" id="infection"></div>
+                </div>
+            </div> 
+
+            <hr>
+            <hr> 
+            
+            <div id = "testing_summary">
+                <h2 style="text-align:center;">Testing Summary</h2>
+
                 
-                
-                    <div class ="confirmed" id="confirmed"></div>                  
-                    <div class ="active" id="active"></div>
-                    <div class ="recovered" id="recovered"></div>
-                    <div class ="deceased" id="deceased"></div>
+            </div>  
+                    
                 
 
 
 
            
-            </div>
+            
             
 
 
@@ -116,6 +168,7 @@
         const active_count = {{ df['active_count'].to_list()|tojson|safe }}
         const recovered_count = {{ df['recovered_count'].to_list()|tojson|safe }}
         const deceased_count = {{ df['deceased_count'].to_list()|tojson|safe }}
+        
         
     </script>
 

@@ -9,6 +9,6 @@ schedule_task = BackgroundScheduler()
 
 
 if __name__ == "__main__":
-    schedule_task.add_job(my_scheduled_job, 'interval', minutes=60)
+    schedule_task.add_job(my_scheduled_job, 'interval', minutes=1)
     schedule_task.start() 
     app.run(debug=True, host="0.0.0.0", port=5000)

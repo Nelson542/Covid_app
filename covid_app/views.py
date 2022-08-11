@@ -1,7 +1,10 @@
+from ast import Try
+from numpy import negative, positive
 import pandas as pd
 from psycopg2 import Date
 from datetime import date
 import datetime
+from pytz import timezone
 from sqlalchemy import update, cast , Date, desc, func, asc
 from flask import redirect, render_template, request, flash, session, url_for
 
@@ -13,7 +16,8 @@ from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalBeds,Vacci
 
 
 def my_scheduled_job():
-    active_cases = db.session.query(func.count(Patients.status)).filter_by(status = 'positive').all()
+    if db.session.query(func.count(Patients.status)).filter_by(status = 'positive').all():
+        active_cases = db.session.query(func.count(Patients.status)).filter_by(status = 'positive').all()
    
     if ActivePatients.query.filter_by(date_added = datetime.date.today()).all():
         exists = ActivePatients.query.filter_by(date_added = datetime.date.today()).first()
@@ -49,31 +53,49 @@ def encrypt(id):
 
 @app.route('/', methods = ['POST','GET'])
 def home():
-
-    
-    base = datetime.date.today()
-    date_list = sorted([base - datetime.timedelta(days=x) for x in range(7)])
+   
+    date_list = sorted([datetime.date.today() - datetime.timedelta(days=x) for x in range(7)])
     df = pd.DataFrame(date_list, columns=["dates"])
     
+    if CovidTest.query.all(): 
+        confirmed_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.test_result)).filter_by(test_result = 'positive').order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all())
+        recovered_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.is_recovered)).filter_by(is_recovered = True).order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all())    
+        deceased_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_updated), func.count(CovidTest.is_deceased)).filter_by(is_deceased = True).order_by(asc(func.date_trunc('day', CovidTest.date_updated))).group_by(func.date_trunc('day', CovidTest.date_updated)).all()) 
+
+        positive_result = db.session.query(func.count(CovidTest.test_result)).filter_by(test_result = 'positive').all()
+        negative_result = db.session.query(func.count(CovidTest.test_result)).filter_by(test_result = 'negative').all()     
+        print(positive_result, negative_result)   
+
+    
+        df['confirmed_count'] = df['dates'].map(confirmed_dict).fillna(0)
+        df['recovered_count'] = df['dates'].map(recovered_dict).fillna(0)
+        df['deceased_count'] = df['dates'].map(deceased_dict).fillna(0)
+    else:
+        df['confirmed_count'] = 0
+        df['recovered_count'] = 0
+        df['deceased_count'] = 0
+
+
+    
+    if ActivePatients.query.all(): 
+        active_dict = dict(db.session.query(func.date_trunc('day', ActivePatients.date_added), ActivePatients.active_count).order_by(asc(func.date_trunc('day', ActivePatients.date_added))).all())
+        df['active_count'] = df['dates'].map(active_dict).fillna(0)
+    else:
+        df['active_count'] = 0    
+
+    if Hospitals.query.all():
+        hospital_details = Hospitals.query.with_entities(Hospitals.hospital_name, Hospitals.contact_number,Hospitals.total_capacity, Hospitals.icu_beds).filter_by(is_deleted = False).all()
+    print(datetime.datetime.now(timezone("Asia/Kolkata")))
+
+    
+        
     
     
-
-    confirmed_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.test_result)).filter_by(test_result = 'positive').order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all())
-    active_dict = dict(db.session.query(func.date_trunc('day', ActivePatients.date_added), ActivePatients.active_count).order_by(asc(func.date_trunc('day', ActivePatients.date_added))).all())
-    recovered_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.is_recovered)).filter_by(is_recovered = True).order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all())    
-    deceased_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.is_deceased)).filter_by(is_deceased = True).order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all()) 
-
-    df['confirmed_count'] = df['dates'].map(confirmed_dict).fillna(0)
-    df['active_count'] = df['dates'].map(active_dict).fillna(0)
-    df['recovered_count'] = df['dates'].map(recovered_dict).fillna(0)
-    df['deceased_count'] = df['dates'].map(deceased_dict).fillna(0)
-            
-
-    print(df)   
-
-    print(df['confirmed_count'].to_list()) 
     
-    count  =90  
+
+
+    
+    
     
 
 
@@ -242,7 +264,7 @@ def update_patient():
             return redirect(url_for('patient_display'))  
 
         else:
-            error = 'Patient does not exist !!! Please add'
+            flash('Patient does not exist !!! Please add')
             return redirect(url_for('add_patient')) 
 
     return render_template("update_patient.html", **locals())
@@ -271,22 +293,22 @@ def patient_display():
     if request.method == "POST":
         status = request.form.get('status')
         #print(select)
-        db.session.query(Patients).filter(Patients.id == patient_id).update({Patients.status : status}, synchronize_session = False)
-        db.session.query(CovidTest).filter(CovidTest.patient_id == patient_id).update({CovidTest.is_current : False}, synchronize_session = False)            
+        db.session.query(Patients).filter(Patients.id == patient_id).update({Patients.status : status}, synchronize_session = False)                  
         db.session.commit()
-        if patient_status == "positive" and status == "negative":                  
-            test = CovidTest(test_result = status, is_recovered = True, date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+        if patient_status == "positive" and status == "negative":       
+            db.session.query(CovidTest).filter(CovidTest.patient_id == patient_id).update({CovidTest.is_current : False}, synchronize_session = False)            
+            test = CovidTest(test_result = status, is_recovered = True, date_added = datetime.datetime.now(timezone("Asia/Kolkata")),hospital_test = hospital, patient_test = patient )
             db.session.add(test)
             db.session.commit()
             flash('Patient successfully updated!!!')
 
         elif status == "deceased":
-            test = CovidTest(test_result = status,is_deceased = True,date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
-            db.session.add(test)
+            db.session.query(CovidTest).filter(CovidTest.patient_id == patient_id,CovidTest.is_current == True).update({CovidTest.is_deceased : True, CovidTest.date_updated : datetime.datetime.now(timezone("Asia/Kolkata")) }, synchronize_session = False) 
             db.session.commit()
             flash('Patient successfully updated!!!')
-        else: 
-            test = CovidTest(test_result = status,date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+        else:
+            db.session.query(CovidTest).filter(CovidTest.patient_id == patient_id).update({CovidTest.is_current : False}, synchronize_session = False)  
+            test = CovidTest(test_result = status,date_added = datetime.datetime.now(timezone("Asia/Kolkata")),hospital_test = hospital, patient_test = patient )
             db.session.add(test)
             db.session.commit() 
             flash('Patient successfully updated!!!')
@@ -315,14 +337,14 @@ def add_patient():
             if status == "positive" and form.test_result.data == "negative":
                 db.session.query(Patients).filter(Patients.id == id).update({Patients.status : form.test_result.data}, synchronize_session = False)            
                 db.session.query(CovidTest).filter(CovidTest.patient_id == id).update({CovidTest.is_current : False}, synchronize_session = False)            
-                test = CovidTest(test_result = form.test_result.data, is_recovered = True , date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = exists )
+                test = CovidTest(test_result = form.test_result.data, is_recovered = True , date_added = datetime.datetime.now(timezone("Asia/Kolkata")),hospital_test = hospital, patient_test = exists )
                 db.session.add(test)
                 db.session.commit()
                 flash('Patient already exists and test result is successfully updated!!!')
             else: 
                 db.session.query(Patients).filter(Patients.id == id).update({Patients.status : form.test_result.data}, synchronize_session = False)            
                 db.session.query(CovidTest).filter(CovidTest.patient_id == id).update({CovidTest.is_current : False}, synchronize_session = False)            
-                test = CovidTest(test_result = form.test_result.data,  date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = exists )
+                test = CovidTest(test_result = form.test_result.data,  date_added = datetime.datetime.now(timezone("Asia/Kolkata")),hospital_test = hospital, patient_test = exists )
                 db.session.add(test)
                 db.session.commit() 
                 flash('Patient already exists and test result is successfully updated!!!')
@@ -332,10 +354,10 @@ def add_patient():
                 flash('Unique id already exists for another patient!!!') 
                 
             else:    
-                patient = Patients(first_name = form.first_name.data, last_name = form.last_name.data, dob = form.dob.data,unique_id = unique_id_hash, age = (datetime.datetime.now().year- form.dob.data.year), gender = form.gender.data, status = form.test_result.data)
+                patient = Patients(first_name = form.first_name.data, last_name = form.last_name.data, dob = form.dob.data,unique_id = unique_id_hash, age = (datetime.datetime.now(timezone("Asia/Kolkata")).year- form.dob.data.year), gender = form.gender.data, status = form.test_result.data)
                 db.session.add(patient)
                 db.session.commit()
-                test = CovidTest(test_result = form.test_result.data, date_added = datetime.datetime.now(),hospital_test = hospital, patient_test = patient )
+                test = CovidTest(test_result = form.test_result.data, date_added = datetime.datetime.now(timezone("Asia/Kolkata")),hospital_test = hospital, patient_test = patient )
                 db.session.add(test)
                 db.session.commit() 
                 flash('Patient successfully added!!!')

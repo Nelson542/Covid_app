@@ -2,7 +2,7 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	font-family: sans-serif;
+	
     
 }
 
@@ -170,7 +170,12 @@
 	.content {
 		padding-top: 2.5rem;
         width:100%;
+        
 	}
+    .highcharts-container {
+        margin: 0 auto;
+        display: inline-block;
+      }
     
 
 
@@ -203,5 +208,24 @@
 
 
 
+.highcharts-container {
+    margin: 0 auto;
+  }
+
+.css-serial {
+    counter-reset: serial-number; /* Set the serial number counter to 0 */
+   }
+.css-serial td:first-child:before {
+    counter-increment: serial-number; /* Increment the serial number counter */
+    content: counter(serial-number); /* Display the counter */
+   }
+
+
+
+
+
+   .highcharts-container {
+    margin: 0 auto;
+  }
 
 

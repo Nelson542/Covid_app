@@ -49,6 +49,7 @@ class CovidTest(db.Model):
     is_recovered = db.Column(db.Boolean, default=False)
     is_deceased = db.Column(db.Boolean, default=False)
     is_current = db.Column(db.Boolean, default=True)
+    date_updated = db.Column(db.DateTime)
 
 class ActivePatients(db.Model):
     id = db.Column(db.Integer, primary_key = True )
