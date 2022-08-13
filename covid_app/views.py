@@ -1,11 +1,11 @@
 from ast import Try
-from numpy import negative, positive
+from numpy import negative, percentile, positive
 import pandas as pd
 from psycopg2 import Date
 from datetime import date
 import datetime
 from pytz import timezone
-from sqlalchemy import update, cast , Date, desc, func, asc
+from sqlalchemy import update, cast , Date, desc, func, asc, case, and_
 from flask import redirect, render_template, request, flash, session, url_for
 
 from covid_app import app , db
@@ -17,8 +17,7 @@ from covid_app.forms import AdminLogin, AddUser, AddHospital, HospitalBeds,Vacci
 
 def my_scheduled_job():
     if db.session.query(func.count(Patients.status)).filter_by(status = 'positive').all():
-        active_cases = db.session.query(func.count(Patients.status)).filter_by(status = 'positive').all()
-   
+        active_cases = db.session.query(func.count(Patients.status)).filter_by(status = 'positive').all()  
     if ActivePatients.query.filter_by(date_added = datetime.date.today()).all():
         exists = ActivePatients.query.filter_by(date_added = datetime.date.today()).first()
         db.session.query(ActivePatients).filter(ActivePatients.id == exists.id).update({ActivePatients.active_count : active_cases[0][0]}, synchronize_session = False)
@@ -57,23 +56,31 @@ def home():
     date_list = sorted([datetime.date.today() - datetime.timedelta(days=x) for x in range(7)])
     df = pd.DataFrame(date_list, columns=["dates"])
     
+    my_scheduled_job()
+
     if CovidTest.query.all(): 
         confirmed_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.test_result)).filter_by(test_result = 'positive').order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all())
         recovered_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.is_recovered)).filter_by(is_recovered = True).order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all())    
         deceased_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_updated), func.count(CovidTest.is_deceased)).filter_by(is_deceased = True).order_by(asc(func.date_trunc('day', CovidTest.date_updated))).group_by(func.date_trunc('day', CovidTest.date_updated)).all()) 
-
-        positive_result = db.session.query(func.count(CovidTest.test_result)).filter_by(test_result = 'positive').all()
-        negative_result = db.session.query(func.count(CovidTest.test_result)).filter_by(test_result = 'negative').all()     
-        print(positive_result, negative_result)   
-
-    
         df['confirmed_count'] = df['dates'].map(confirmed_dict).fillna(0)
         df['recovered_count'] = df['dates'].map(recovered_dict).fillna(0)
         df['deceased_count'] = df['dates'].map(deceased_dict).fillna(0)
+
+        test_result = db.session.query(func.count(case([((CovidTest.test_result == 'positive'), CovidTest.test_result)])),func.count(case([((CovidTest.test_result == 'negative'), CovidTest.test_result)]))).all()      
+        total_tests_done = test_result[0][0] + test_result[0][1]
+        positive_result_percentage = (test_result[0][0]/total_tests_done) *100
+        negative_result_percentage = (test_result[0][1]/total_tests_done) *100  
+
+        negative_results_dict = dict(db.session.query(func.date_trunc('day', CovidTest.date_added), func.count(CovidTest.test_result)).filter_by(test_result = 'negative').order_by(asc(func.date_trunc('day', CovidTest.date_added))).group_by(func.date_trunc('day', CovidTest.date_added)).all())
+        df['negative_results'] = df['dates'].map(negative_results_dict).fillna(0)  
     else:
         df['confirmed_count'] = 0
         df['recovered_count'] = 0
         df['deceased_count'] = 0
+        total_tests_done = 0
+        positive_result_percentage = 0
+        negative_result_percentage = 0
+        df['negative_results'] = 0
 
 
     
@@ -85,9 +92,18 @@ def home():
 
     if Hospitals.query.all():
         hospital_details = Hospitals.query.with_entities(Hospitals.hospital_name, Hospitals.contact_number,Hospitals.total_capacity, Hospitals.icu_beds).filter_by(is_deleted = False).all()
-    print(datetime.datetime.now(timezone("Asia/Kolkata")))
-
     
+    if Patients.query.all():
+        gender_result = db.session.query(func.count(case([((Patients.gender == 'M'), Patients.gender)])),func.count(case([((Patients.gender == 'F'), Patients.gender)]))).all()      
+        total_people = gender_result[0][0] + gender_result[0][1]
+        male_percentage = (gender_result[0][0]/total_people) *100
+        female_percentage = (gender_result[0][1]/total_people) *100 
+        age_result = db.session.query(func.count(case([((Patients.age <= 18), Patients.id)])),func.count(case([(and_(Patients.age >= 19, Patients.age <= 40 ),Patients.id)])),func.count(case([(and_(Patients.age >= 41, Patients.age <= 60 ),Patients.id)])),func.count(case([((Patients.age >= 61), Patients.id)]))).all()      
+    
+
+
+    print(df)
+    print(age_result[0][0],age_result[0][1],age_result[0][2],age_result[0][3])
         
     
     

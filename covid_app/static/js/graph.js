@@ -302,3 +302,160 @@ document.addEventListener('DOMContentLoaded', function () {
         
     });
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const chart = Highcharts.chart('testing', {
+        chart: {
+            type: 'column',
+            backgroundColor: '#222',
+            height: 550,
+            width:600
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            type: 'datetime',
+            labels: {
+                style: {
+                  color: '#efefef'
+                }
+              },        
+            categories: dates.map(date => {
+            return Highcharts.dateFormat('%d-%b', new Date(date).getTime());
+          })
+                
+          },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'No of people',
+                style: {
+                    color: '#efefef'
+                  }
+            },
+            labels: {
+                style: {
+                  color: '#efefef'
+                }
+              },
+            gridLineColor: 'transparent', 
+        },
+        tooltip: {
+            valueSuffix: ' people'
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+      
+        
+        series: [{
+            name: 'Positive',
+            data: confirmed_count,
+            color: '#d90537'
+        }, {
+            name: 'Negative',
+            data: negative_results,
+            color: '#5355f6'
+        }],
+        navigation: {buttonOptions: {enabled: false}},
+        credits: {enabled: false},
+        legend:{ itemStyle: {
+            color: '#A0A0A0'
+         },
+         itemHoverStyle: {
+            color: '#FFF'
+         },
+         itemHiddenStyle: {
+            color: '#444'
+         } },
+        
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const chart = Highcharts.chart('age_graph', {
+        chart: {
+            type: 'pie',
+            backgroundColor: '#222',
+            height: 400,
+            width:600,
+        },
+        title: {
+            text: 'Age-wise Summary',
+            style: {
+                color: '#efefef'
+              }
+
+        },
+        tooltip: {
+            pointFormat: '<b>{point.y} people</b>',
+            
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: '#efefef'
+                      }
+
+                },
+                borderColor:'#222'
+            }
+        },
+        series: [{
+            name: 'Age',
+            colorByPoint: true,
+            data: [{
+                name: '0 - 18 Years',
+                y: age1,
+                sliced: true,
+                selected: true,
+                color: '#c03f45'
+            }, {
+                name: '19 - 40 Years',
+                y: age2,
+                color: '#3992a9'
+            },  {
+                name: '41 - 60 Years',
+                y: age3,
+                color: '#bbb947'
+            }, {
+                name: 'Above 60 Years',
+                y: age4,
+                color: '#33873e'
+
+            }]
+
+           
+            
+        }],
+        navigation: {buttonOptions: {enabled: false}},
+        credits: {enabled: false},
+        legend:{ itemStyle: {
+            color: '#A0A0A0'
+         },
+         itemHoverStyle: {
+            color: '#FFF'
+         },
+         itemHiddenStyle: {
+            color: '#444'
+         } },
+
+    });
+});

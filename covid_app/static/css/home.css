@@ -1,14 +1,13 @@
 * {
 	margin: 0;
 	padding: 0;
-	box-sizing: border-box;
-	
-    
+	box-sizing: border-box;    
 }
 
 .container { 
     position:absolute; 
-    width:100% }
+    width:100% 
+}
 
 .app {
 	display: flex;
@@ -72,11 +71,9 @@
 	max-width: 19rem;
 	padding: 2rem 1rem;
 	background-color: #222224;
-    position: relative;
-    
+    position: relative;   
     float: left;
 }
-
 
 .sidebar h3 {
 	color: #707793;
@@ -96,8 +93,7 @@
 	padding: 1em;
 	color: rgb(214, 212, 212);
 	text-decoration: none;
-	transition: 0.2s linear;
-    
+	transition: 0.2s linear;    
 }
 
 .sidebar .menu .menu-item:hover,
@@ -110,8 +106,7 @@
 	border-right: 0.3rem solid #3bba9c;
 }
 
-.sidebar .btn {
-	
+.sidebar .btn {	
 	position: fixed;
     bottom: 0.625rem;
     left: 0.625rem;
@@ -122,8 +117,7 @@
 	flex: 1 1 0;
 	padding: 2rem;
     background-color: #28292b;
-    display: inline;
-    
+    display: inline;    
 }
 
 .content h2 {
@@ -133,29 +127,99 @@
 }
 
 .content .confirmed{
-
-    width :40%;
-    
+    width :40%;    
 }
 .content .active{
-
     width :40%;   
-
 }
 .content .recovered{
-
-    width :40%;
-    
+    width :40%;    
 }
 .content .deceased{
-
     width :40%;   
-
 }
 
 .content p {
 	color: #707793;
 }
+
+.test {
+	position: relative;
+	width: 700px;
+	height: 700px;
+	background-color: #222;
+    margin:0 auto;
+}
+
+.test_summary .block {
+    padding: 0 1rem;
+    flex: 0 0 calc(100% / 3);
+    max-width: calc(100% / 3);
+    text-align: center;
+    margin: 1rem 0;
+    border-width: 4px;
+    border-bottom: 5px #28292b solid;
+    
+
+}
+.test_summary {
+    display: flex;
+    width: 100%;
+}
+
+.gender {
+	position: relative;
+	width: 700px;
+	height: 650px;
+	background-color: #222;
+    margin:0 auto;
+}
+
+.gender_summary .box {
+    padding: 1rem 1rem;
+    flex: 0 0 calc(100% / 2);
+    max-width: calc(100% / 2);
+    text-align: center;
+    margin: 1rem 0;
+}
+.gender_summary {
+    display: flex;
+    width: 100%;
+}
+
+.highcharts-container {
+    margin: 0 auto;
+  }
+
+.css-serial {
+    counter-reset: serial-number; /* Set the serial number counter to 0 */
+   }
+.css-serial td:first-child:before {
+    counter-increment: serial-number; /* Increment the serial number counter */
+    content: counter(serial-number); /* Display the counter */
+   }
+
+
+.my-custom-scrollbar {
+    position: relative;
+    height: 200px;
+    width: 700px;
+    overflow: auto;
+    margin: 0 auto;
+    
+    
+    }
+
+.my-custom-scrollbar thead th {
+        position: sticky;
+        top: 0;
+        background-color: #222;
+      }    
+.table-wrapper-scroll-y {
+    display: block;
+    }
+
+
 
 @media (max-width: 1024px) {
 	.sidebar {
@@ -176,9 +240,6 @@
         margin: 0 auto;
         display: inline-block;
       }
-    
-
-
 	.sidebar {
 		position: fixed;
 		top: 0;
@@ -188,44 +249,14 @@
 		max-width: 19rem;
 		transition: 0.2s linear;
 	}
-
 	.sidebar.is-active {
 		left: 0;
 	}
-
-    .sidebar .btn {
-	
-        position: absolute;
-        
-        
+    .sidebar .btn {	
+        position: absolute;        
     }
-
     .sidebar .menu {
         position: absolute;
     }
 }
-
-
-
-
-.highcharts-container {
-    margin: 0 auto;
-  }
-
-.css-serial {
-    counter-reset: serial-number; /* Set the serial number counter to 0 */
-   }
-.css-serial td:first-child:before {
-    counter-increment: serial-number; /* Increment the serial number counter */
-    content: counter(serial-number); /* Display the counter */
-   }
-
-
-
-
-
-   .highcharts-container {
-    margin: 0 auto;
-  }
-
 
