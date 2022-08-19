@@ -41,20 +41,20 @@
 		</div>
                 
 		<aside class="sidebar">
-			<h3>Dashboard</h3>                   
+			<h2>Dashboard</h2>                   
 			<nav class="menu">
 				<a href="#home" class="menu-item ">Home</a>
 				<a href="#hospitals" class="menu-item">Hospitals</a>
 				<a href="#infection_summary" class="menu-item">Infection Summary</a>
                 <a href="#testing_summary" class="menu-item">Testing Summary</a>
 				<a href="#age_summary" class="menu-item">Age wise and <br>Gender wise Summary</a>
-                <a href="#" class="menu-item">Vaccination Coverage</a>
+                <a href="#vaccination_coverage" class="menu-item">Vaccination Coverage</a>
 			</nav>        
             <a href="/admin" class="btn btn-outline-primary" role="button">Login</a>
 		</aside>
                
 		<main class="content" id = "home">			
-            <div > 
+            <div id = "tracker" > 
                 <h2 style="text-align:center;">COVID-19 Tracker</h2>              
                 <div class="row">
                     <div class ="confirmed col-md-6" id="confirmed"></div>
@@ -178,15 +178,61 @@
                                     {% if female_percentage %}
                                         <h4 style='color:rgb(165, 159, 159);padding-top: 1rem;'>{{ '%0.2f'| format(female_percentage|float) }} %</h4>
                                     {% endif %}    
-                                </div>  
-                                
+                                </div>                                 
                             </div>
                         </div>    
                     </div>                      
                     <div id="age_graph"></div>                   
                 </div>
-            </div>                       
-                
+            </div>   
+            <br>
+            <br>
+            <br>
+            <div id = "vaccination_coverage">
+                <h2 style="text-align:center;">Vaccination Coverage</h2>  
+                <div class="vaccine">
+                    <div class="row ">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="total_vaccine">
+                                <div class="total">
+                                    <div class="title text-secondary">
+                                        <h4>Total vaccination count</h4>
+                                        {% if vaccination_result %}
+                                            <h5 style="padding-top: 2rem ;">{{ vaccination_result[0][0]  + vaccination_result[0][1] + vaccination_result[0][2] }}</h5>
+                                        {% endif %}    
+                                    </div>            
+                                </div>                                 
+                            </div>
+                            <div class = "dose_summary">       
+                                <div class="dose">
+                                    <div class="title text-secondary">
+                                        <h5>First Dose</h5>
+                                        {% if vaccination_result %}
+                                            <h5 style="padding-top: 3rem ;">{{ vaccination_result[0][0] }}</h5>
+                                        {% endif %}    
+                                    </div>            
+                                </div>                                 
+                                <div class="dose">
+                                    <div class="title text-secondary">
+                                        <h5>Second Dose</h5>
+                                        {% if vaccination_result %}
+                                            <h5 style="padding-top: 3rem ;">{{ vaccination_result[0][1] }}</h5>
+                                        {% endif %}  
+                                    </div>            
+                                </div> 
+                                <div class="dose">
+                                    <div class="title text-secondary">
+                                        <h5>Precautionary Dose</h5>
+                                        {% if vaccination_result %}
+                                            <h5 style="padding-top: 3rem ;">{{ vaccination_result[0][2] }}</h5>
+                                        {% endif %}  
+                                    </div>            
+                                </div> 
+                            </div> 
+                        </div>    
+                    </div> 
+                </div>
+            </div> 
 		</main>        
     </div>
 
@@ -198,10 +244,10 @@
         const recovered_count = {{ df['recovered_count'].to_list()|tojson|safe }}
         const deceased_count = {{ df['deceased_count'].to_list()|tojson|safe }}
         const negative_results = {{ df['negative_results'].to_list()|tojson|safe }}
-        const age1 = {{ age_result[0][0]|tojson|safe }}
-        const age2 = {{ age_result[0][1]|tojson|safe }}
-        const age3 = {{ age_result[0][2]|tojson|safe }}
-        const age4 = {{ age_result[0][3]|tojson|safe }}        
+        const age1 = {{ age_1|tojson|safe }}
+        const age2 = {{ age_2|tojson|safe }}
+        const age3 = {{ age_3|tojson|safe }}
+        const age4 = {{ age_4|tojson|safe }}        
     </script>
 
     {% endblock %}       

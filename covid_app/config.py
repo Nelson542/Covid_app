@@ -21,6 +21,4 @@ host = get_env_variable("POSTGRES_HOST")
 database = get_env_variable("POSTGRES_DB")
 port = get_env_variable("POSTGRES_PORT")
 
-
-
 DATABASE_CONNECTION_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'

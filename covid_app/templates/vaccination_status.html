@@ -1,51 +1,39 @@
 {% extends "update_hospital.html" %}
-
-    {% block head %}
-    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}"-->
-
+    {% block div_css1 %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/vaccination_status.css') }}">
     {% endblock %}
-
-  
-
-        {% block sub %}
     
-        <div>
-            <h2  style="text-align: center;" > Vaccination Status</h2>
-            
-            <div>
-                <h3>First dose --> {{ first_dose }}</h3>
-                <h3>Second dose --> {{ second_dose }}</h3>   
-                <h3>Precautionary dose --> {{ precautionary_dose }}</h3>    
+    {% block sub %}
+    <div class = "wrapper">
+        <div class="container-form">
+            <h3 style="text-align: center;color:#7d837d;">Vaccination Status</h3>           
+            <div class="row" style="justify-content: center;">
+                <div class="col-xs-3" id="labels" style="padding-right:30px ;" >
+                    <div class="labels">
+                        <h6>First dose : </h6>
+                        <h6>Second dose :</h6>
+                        <h6>Precautionary dose :</h6>   
+                    </div>
+                </div>              
+                <div class="col-xs-3" style="padding-left:30px ;" id="data">
+                    <div class="data">
+                        <h6>{{ first_dose }}</h6>
+                        <h6>{{ second_dose }}</h6>
+                        <h6>{{ precautionary_dose }}</h6> 
+                    </div>  
+                </div>   
             </div>
-
-            <div>
-                <form method = 'POST' >
-                    <legend>Update Vaccination Status</legend>
-                    {{ form.hidden_tag() }}
-                    
-                    <div>
-                       {{ form.first_dose.label }}<br>
-                       {{ form.first_dose }}
-                       <br>
-                       
-                       {{ form.second_dose.label }}<br>
-                       {{ form.second_dose }}
-                       <br>
-
-                       {{ form.precautionary_dose.label }}<br>
-                       {{ form.precautionary_dose }}
-                       <br>
-                   
-                       <br>
-                       {{ form.submit }}
-                    </div>        
-              </form>
-
-            </div>
-
+            <form class ="form-control" method = 'POST' autocomplete="off">
+                {{ form.hidden_tag() }}              
+                <h6 style="text-align: center;font-family:'Lucida Console';color:#1b1818;">Update Vaccination Status</h6>               
+                {{ form.first_dose(class_="form-control") }}
+                {{ form.second_dose(class_="form-control") }}  
+                {{ form.precautionary_dose(class_="form-control") }}               
+                {{ form.submit(class_="button-submit") }}
+            </form>
         </div>
-        
-        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
-        {% endblock %}
-    
- 
+    </div>
+    <div style="padding-top:30px ;">
+        <a class="btn btn-danger mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+    </div>
+    {% endblock %}        

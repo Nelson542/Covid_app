@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+}
+
+.wrapper {
+    background-color: #28292b;
+    border-radius: 5px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow:visible;
+    margin: 0;
+    max-width: 100%; 
+    height: 100%;
+    padding-top: 50px;
+}
+
+.container-form {
+    background-color: #222;
+    padding: 20px 40px;
+    border-radius: 5px;
+    width: 700px;
+}
+
+.container-form h3 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: lightblue;
+}
+.labels h6 {
+    text-align: left;
+    margin-bottom: 10px;
+    color: lightblue;
+    font-family:'Lucida Console';
+}  
+.data h6 {
+    text-align: left;
+    margin-bottom: 10px;
+    color: rgb(144, 165, 58);
+    font-family:'Lucida Console';
+}   
+
+
+.container-form a {
+    text-decoration: none;
+    color: lightblue;
+}   
+
+.labels .h6{
+    text-align: left;
+    color: rgb(223, 218, 218);
+
+}
+
+.form-control {
+    position: relative;
+    margin:0 auto;
+    width: 60%;
+    height: auto;
+    background-color: rgb(213, 201, 201);
+    text-align: center;
+    justify-content: center;
+}
+
+.form-control .status {
+    position: relative;
+    margin:0 ;
+    width: 100%;
+    height: auto;
+
+}
+
+.wrapper .row {
+    padding-bottom: 40px;
+}
+
+.button-submit {
+    cursor: pointer;
+    display: inline-block;
+    width: 60%;
+    background: rgb(168, 64, 64);
+    padding: 0rem;
+    font-family: inherit;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+    color: rgb(16, 9, 9);
+    font-family: Lucida Console;
+}
+
+.button-submit:active {
+    transform: scale(0.98);
+}
+
+
+
+
+
+

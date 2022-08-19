@@ -5,3 +5,77 @@
     counter-increment: serial-number; /* Increment the serial number counter */
     content: counter(serial-number); /* Display the counter */
    }
+
+* {
+    box-sizing: border-box;
+}
+
+a:not([href]):not([tabindex]) {
+    color: rgb(237, 232, 232);
+    text-decoration: none;
+}
+
+.container {
+    background-color: #28292b;
+    padding: 80px ;
+    border-radius: 5px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    max-width: 100%;    
+}
+.container h1 {
+    color: rgb(237, 232, 232);
+}
+.container h2 {
+    color: rgb(237, 232, 232);
+}
+
+.test {  
+    width: auto;
+    height: auto;
+}
+
+
+.col-md-12 {
+    padding: 30px ;
+}
+
+
+.my-custom-scrollbar-admin {
+    position: relative;
+    height: 300px;
+    width: 300px;
+    overflow: auto;
+    margin: 0 auto; 
+    align-items: center;   
+    }
+
+.my-custom-scrollbar-admin thead th {
+        position: sticky;
+        top: 0;
+        background-color: #222;
+      } 
+      
+.my-custom-scrollbar-hospital {
+        position: relative;
+        height: 300px;
+        width: 500px;
+        overflow: auto;
+        margin: 0 auto; 
+        align-items: center;   
+        }
+    
+.my-custom-scrollbar-hospital thead th {
+            position: sticky;
+            top: 0;
+            background-color: #222;
+          }      
+.table-wrapper-scroll-y {
+    display: block;
+    }

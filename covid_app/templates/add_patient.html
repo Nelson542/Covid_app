@@ -1,84 +1,39 @@
 {% extends "update_hospital.html" %}
-
-    {% block head %}
-    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}"-->
-
+    {% block div_css1 %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/add_patient.css') }}">
     {% endblock %}
 
-  
-
-        {% block sub %}
-    
-        <div>
-            <h2  style="text-align: center;" >Add  patient</h2>
-            
-
+        {% block sub %}  
+        <div class = "wrapper">
             {% if error %}
                 <p><strong>Error:</strong> {{ error }}
-            {% endif %} 
-            
+            {% endif %}            
             {% with messages = get_flashed_messages() %}
-         {% if messages %}
-            <ul>
-               {% for message in messages %}
-               <li>{{ message }}</li>
-               {% endfor %}
-            </ul>
-         {% endif %}
-        {% endwith %}
-
-            
-            <div>
-                <form method = 'POST' >
-                    <legend>Add patient</legend>
-                    {{ form.hidden_tag() }}
-                    
-                    <div>
-                        <br> 
-                       {{ form.first_name.label }}<br>
-                       {{ form.first_name }}
-                       <br>
-            
-                       <br> 
-                       {{ form.last_name.label }}<br>
-                       {{ form.last_name }}
-                       <br>
-            
-                       <br> 
-                       {{ form.dob.label }}<br>
-                       {{ form.dob }}
-                       <br>
-            
-                       <br> 
-                       {{ form.unique_id.label }}<br>
-                       {{ form.unique_id }}
-                       <br>
-            
-                       <br> 
-                       {{ form.gender.label }}<br>
-                       {{ form.gender }}
-                       <br>
-            
-                       <br> 
-                       {{ form.test_result.label }}<br>
-                       {{ form.test_result }}
-                       <br>
-                       
-                   
-                       <br>
-                       {{ form.submit }}
-                    </div>        
-                </form>     
+                {% if messages %}
+                    <ul>
+                    {% for message in messages %}
+                    <h4 style="font-size: 20px;font-family:'Lucida Console';color:#46ac42;">{{ message }}</h4>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <div class="container-form">
+                <h2>Add patient</h2>
+                <form method = 'POST' autocomplete="off">
+                    {{ form.hidden_tag() }}                
+                    {{ form.first_name(class_="form-control") }}
+                    {{ form.last_name(class_="form-control") }}     
+                    {{ form.dob(class_="form-control") }}     
+                    {{ form.unique_id(class_="form-control") }}  
+                    {{ form.gender(class_="form-control") }}  
+                    {{ form.test_result(class_="form-control") }}                
+                    {{ form.submit(class_="button") }}
+                </form>
             </div>
-
-
-
-
-            
-
+            <div style="padding-top:30px ;">
+                <a class="btn btn-danger mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+            </div>
         </div>
-        
-        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
         {% endblock %}
     
 

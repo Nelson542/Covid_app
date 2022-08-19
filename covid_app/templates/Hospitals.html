@@ -2,90 +2,80 @@
 
     {% block head %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/hospitals.css') }}">
-
+    {% block div_css %}{% endblock %}
     {% endblock %}
 
     {% block content %}
-
     
-
-    <h2  style="text-align: center;" >Welcome!</h2>
-    <br>
-    <br>
-    <div class="d-flex justify-content-center">
-        <a class="btn btn-outline-primary mr-1" href="/adduser" role="button">Add User</a>
-        <a class="btn btn-outline-primary mr-1" href="/addhosp" role="button">Add Hospital</a>
-        <a class="btn btn-outline-primary mr-1" href="/" role="button">Logout</a>
-    </div>
-    <br>
-    <br>
-    
-
-
-
-            <div class="row col-md-12 padding-0">
-                
-                <div class="table-responsive col-md-6">
-                    <h2 class="sub-header" style="text-align:center;">Admins</h2>
-                    <table class="table css-serial "  >
-                        <thead>
-                        <tr>
-                            <th scope="col">Sl No</th>
-                    
-                            <th scope="col">Admin Name</th>
-                        </tr>
-                        </thead>
-                        {% if user_list%}
-                        {% for key,value in user_df.iterrows() %}               
-                        <tr>
-                            <td></td>
-                            <td>{{ value['name'] }}</td>                            
-                            <td><a href="{{url_for('DeleteUser',userid=value['pk'])}}" class="btn btn-outline-primary" role="button"><span class="bi bi-trash"></span></a></td>
-                            
-                        </tr>
-                        {% endfor %}
-                        {% endif %}
-                            
-                    </table>
-                </div>
-                <div class="table-responsive col-md-6">
-                    <h2 class="sub-header" style="text-align:center;">Hospitals</h2>
-                    <table class="table css-serial" >
-                        <thead>
-                        <tr>
-                            <th scope="col">Sl No</th>
-                    
-                            <th scope="col">Hospital Name</th>
-                    
-                            <th scope="col">Contact Number</th>
-
-                            <th scope="col">Admin</th>
-                        </tr>
-                        </thead>
-                        {% if hospital_list%}
-                        {% for key,value in hospital_df.iterrows() %} 
-                            {% if value['is_deleted'] == False %}              
-                            <tr>
-                                
-                                <td></td>
-                                <td>{{ value['name'] }}</td>
-                                <td>{{ value['contact'] }}</td>
-                                <td>{{ value['user'] }}</td>      
-                                <td><a href="{{url_for('DeleteHospital',hospid=value['pk'])}}" class="btn btn-outline-primary" role="button"><span class="bi bi-trash"></span></a></td>
-
-                               
+        <nav class="navbar fixed-top navbar-dark bg-dark ">
+            <a class="navbar-brand" >COVID-19 Tracker</a>
+            <div class="my-2 my-lg-0">
+            <a class="btn btn-danger" href="/" role="button">Logout</a>
+            </div>
+        </nav>
+        {% block div %}
+        <div class="container">
+            <h2 style="text-align: center;padding-bottom: 40px;font-family:'Lucida Console';color:#e9dfdf;">Welcome</h2>
+            <div class="test">
+                <a class="btn btn-info" href="/adduser" role="button">Add User</a>
+                <a class="btn btn-info" href="/addhosp" role="button">Add Hospital</a>               
+            </div>
+            <div class="row col-md-12 padding-0 flex-fill">          
+                <div class="table-responsive col-md-6 ">                    
+                    <h2 class="sub-header" style="text-align:center; color:#af321c;font-family:'Lucida Console';">USERS</h2>
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar-admin">                       
+                        <table class="table css-serial "  >
+                            <thead>
+                            <tr class="first" style="text-align:center;font-family:'Lucida Console';color:#e9dfdf;">
+                                <th scope="col">Sl No</th>                   
+                                <th scope="col">User Name</th>
+                                <th></th>
                             </tr>
-                            {% endif %}
-                        {% endfor %}
-                        {% endif %}   
-                    </table>
+                            </thead>
+                            {% if user_list%}
+                            {% for key,value in user_df.iterrows() %}               
+                            <tr style="text-align:center;font-family:'Lucida Console';color:rgb(221, 215, 215);font-weight: 600;">
+                                <td></td>
+                                <td>{{ value['name'] }}</td>                            
+                                <td><a href="{{url_for('DeleteUser',userid=value['pk'])}}" class="btn btn-outline-primary" role="button"><span class="bi bi-trash"></span></a></td>                            
+                            </tr>
+                            {% endfor %}
+                            {% endif %}                        
+                        </table>
+                    </div>
                 </div>
-              </div>
-
-
-
-    
-    
+                <div class="table-responsive col-md-6">
+                    <h2 class="sub-header" style="text-align:center;color:#af321c;font-family:'Lucida Console';">HOSPITALS</h2>
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar-hospital">
+                        <table class="table css-serial" >
+                            <thead>
+                            <tr class="first" style="text-align:center;font-family:'Lucida Console';color:#e9dfdf;">
+                                <th scope="col">Sl No</th>                   
+                                <th scope="col">Hospital Name</th>                   
+                                <th scope="col">Contact Number</th>
+                                <th scope="col">Admin</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            {% if hospital_list%}
+                            {% for key,value in hospital_df.iterrows() %} 
+                                {% if value['is_deleted'] == False %}              
+                                <tr style="text-align:center;font-family:Jura;color:rgb(221, 215, 215);font-weight: 600;">                           
+                                    <td></td>
+                                    <td>{{ value['name'] }}</td>
+                                    <td>{{ value['contact'] }}</td>
+                                    <td>{{ value['user'] }}</td>      
+                                    <td><a href="{{url_for('DeleteHospital',hospid=value['pk'])}}" class="btn btn-outline-primary" role="button"><span class="bi bi-trash"></span></a></td>                               
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                            {% endif %}   
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
     {% endblock %}
 
 

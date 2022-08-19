@@ -1,26 +1,24 @@
-{% extends "home.html" %}
+{% extends "hospitals.html" %}
 
-    {% block head %}
-    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/hospitals.css') }}"-->
-
+    {% block div_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/details.css') }}">
     {% endblock %}
 
-    {% block content %}
+    {% block div %}
+    <div class="container">
+        <h2  style="text-align:center;padding-bottom: 100px ;font-family:'Lucida Console';color:#e9dfdf;" >Welcome {{ username.title() }} </h2>  
+        {%if hospital_list %}   
+        <div class="container-form">
+            <h5 style="text-align:center;padding-bottom: 40px;font-family:'Lucida Console';color:#649cdc;" >Choose Hospital</h5>    
 
-    <h2  style="text-align: center;" >Welcome {{ username.title() }} </h2>
-    <br>
-    <br>
-    
-
-
-   
-                        
-                {% for item in hospital_list %} 
+            {% for item in hospital_list %} 
                 <div class="row d-flex justify-content-center mb-sm-5">
-                    <a class="btn btn-outline-primary mr-1 " href="{{url_for('update_hospital',hospital_id=item['pk'])}}" role="button">{{ item['name'] }}</a>            
+                    <a class="btn btn-primary" href="{{url_for('update_hospital',hospital_id=item['pk'])}}" role="button">{{ item['name'].title() }} Hospital</a>            
                 </div>
-                {% endfor %}
-                            
-                
-    
+            {% endfor %}
+        {% else %}        
+            <h4 style="text-align:center;padding-bottom: 40px;font-family:'Lucida Console';color:#a55454;" >No hospital is assigned to you currently..</h4> 
+        {% endif %}  
+    </div>
+    </div>                          
     {% endblock %}

@@ -1,27 +1,18 @@
-{% extends "home.html" %}
-    {% block content %}
- 
+{% extends "hospitals.html" %}
+    {% block div_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/adduser.css') }}">
+    {% endblock %}
 
-        <form style="text-align:center" method = 'POST' autocomplete="off">
-            <h2>Add new user</h2>
-            {{ form.hidden_tag() }}
-            <br>
-            <br>
-            <br>
-            <div>
-               {{ form.username.label }}<br>
-               {{ form.username }}
-               <br>
-               <br>
-               {{ form.password.label }}<br>
-               {{ form.password }}
-               <br>
-                           
-               <br>
-               {{ form.submit }}
-            </div>        
-        </form>
-
-          
-
+    {% block div %}
+        <div class = "wrapper">
+            <div class="container-sub">
+                <h3 style="text-align: center;font-family:'Lucida Console';color:#e9dfdf;">Add user</h3>
+                <form method = 'POST' autocomplete="off">
+                    {{ form.hidden_tag() }}                
+                    {{ form.username(class_="form-control") }}
+                    {{ form.password(class_="form-control") }}                
+                    {{ form.submit(class_="button") }}
+                </form>
+            </div>
+        </div>
     {% endblock %}

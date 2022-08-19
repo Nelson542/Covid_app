@@ -1,23 +1,24 @@
 {% extends "home.html" %}
-    {% block content %}
-        <form style="text-align:center" method = 'POST' autocomplete="off">
-            <h2>Login Form</h2>
-            {{ form.hidden_tag() }}
-            <br>
-            <br>
-            <br>
-            <div>
-               {{ form.username.label }}<br>
-               {{ form.username }}
-               <br>
-               <br>
-               {{ form.password.label }}<br>
-               {{ form.password }}
-               <br>
-                           
-               <br>
-               {{ form.submit }}
-            </div>        
-        </form>
+
+    {% block head %} 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/admin_login.css') }}">
+    {% endblock %}
+
+    {% block content %}   
+    <div class = "login">
+        <nav class="navbar fixed-top navbar-dark bg-dark ">
+            <a class="navbar-brand" >COVID-19 Tracker</a>
+            <a class="btn btn-outline-success my-2 my-sm-0" href="/" style="color:rgb(206, 204, 204) ;">Home</a>
+        </nav>
+        <div class="container">
+            <h2>Login</h2>
+            <form method = 'POST' autocomplete="off">
+                {{ form.hidden_tag() }}                
+                {{ form.username(class_="form-control") }}
+                {{ form.password(class_="form-control") }}                
+                {{ form.submit(class_="button") }}
+            </form>
+        </div>
+    </div>
     {% endblock %}
     

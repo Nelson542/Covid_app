@@ -1,7 +1,8 @@
 * {
 	margin: 0;
 	padding: 0;
-	box-sizing: border-box;    
+	box-sizing: border-box;
+    font-family: Bahnschrift Light;  
 }
 
 .container { 
@@ -75,9 +76,9 @@
     float: left;
 }
 
-.sidebar h3 {
+.sidebar h2 {
 	color: #707793;
-	font-size: 0.75rem;
+	font-size: 1rem;
 	text-transform: uppercase;
 	margin-bottom: 5em;
     position: fixed;
@@ -86,6 +87,7 @@
 .sidebar .menu {
 	margin: 3em -1rem;
     position: fixed;
+    font-family: Bahnschrift Light;
 }
 
 .sidebar .menu .menu-item {
@@ -117,7 +119,8 @@
 	flex: 1 1 0;
 	padding: 2rem;
     background-color: #28292b;
-    display: inline;    
+    display: inline; 
+    font-family: Century Gothic;   
 }
 
 .content h2 {
@@ -187,6 +190,48 @@
     width: 100%;
 }
 
+.vaccine {
+	position: relative;
+	width: 700px;
+	height: auto;
+	background-color: #222;
+    margin:0 auto;  
+}
+
+.total_vaccine .total {
+    padding: 0 1rem;
+    text-align: center;
+    margin: 1rem 0;
+    height: 100%;
+    position: relative;
+    width: 100%;
+    border-width: 4px;
+    border-bottom: 5px #28292b solid;
+}
+.total_vaccine {
+    display: flex;
+    width: 100%;    
+}
+
+.dose_summary .dose {
+    padding: 0 1rem;
+    flex: 0 0 calc(100% / 3);
+    max-width: calc(100% / 3);
+    text-align: center;
+    margin: 1rem 0;
+    height: 100%;
+    position: relative;
+}
+
+.dose_summary {
+    display: flex;
+    width: 100%;    
+}
+
+
+
+
+
 .highcharts-container {
     margin: 0 auto;
   }
@@ -199,15 +244,12 @@
     content: counter(serial-number); /* Display the counter */
    }
 
-
 .my-custom-scrollbar {
     position: relative;
     height: 200px;
     width: 700px;
     overflow: auto;
-    margin: 0 auto;
-    
-    
+    margin: 0 auto;    
     }
 
 .my-custom-scrollbar thead th {

@@ -1,36 +1,19 @@
-{% extends "home.html" %}
+{% extends "hospitals.html" %}
+  {% block div_css %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}">
+  {% block div_css1 %}{% endblock %}
+  {% endblock %}
 
-    {% block head %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/update_hospital.css') }}">
-
-    {% endblock %}
-
-    {% block content %}
-
-    
-   
-      <div>
-        <h2  style="text-align: center;" >Welcome to {{ hospital_name.title() }} Hospital portal</h2>
-      </div>  
-        {% block sub %}
-
-        
-
-        <div>
-          <a class="btn btn-outline-primary mr-1 " href="{{url_for('add_patient')}}" role="button">Add Patient</a> 
-          <a class="btn btn-outline-primary mr-1 " href="{{url_for('update_patient')}}" role="button">View and Update Patient</a>            
-          <a class="btn btn-outline-primary mr-1 " href="{{url_for('hospital_beds')}}" role="button">Hospital Bed Info</a>            
-          <a class="btn btn-outline-primary mr-1 " href="{{url_for('vaccination_status')}}" role="button">Vaccination Status</a>            
-  
-        </div>
-
-       
-
-        
-        {% endblock %}
-
-        <a class="btn btn-outline-primary mr-1" href="{{url_for('home')}}" role="button">Return to Dashboard</a>
-      
-      
-    
-    {% endblock %}
+  {% block div %}
+    <div class="container"> 
+      <h1 style="text-align: center; padding-top: 50px;" >{{ hospital_name.title() }} Hospital portal</h1>
+        {% block sub %}      
+          <div class="buttons">
+            <a class="btn btn-primary mr-1 " href="{{url_for('add_patient')}}" role="button">Add Patient</a> 
+            <a class="btn btn-primary mr-1 " href="{{url_for('update_patient')}}" role="button">View and Update Patient</a>            
+            <a class="btn btn-primary mr-1 " href="{{url_for('hospital_beds')}}" role="button">Hospital Bed Info</a>            
+            <a class="btn btn-primary mr-1 " href="{{url_for('vaccination_status')}}" role="button">Vaccination Status</a>                         
+          </div>
+        {% endblock %}   
+    </div>             
+  {% endblock %}

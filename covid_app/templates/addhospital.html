@@ -1,23 +1,20 @@
-{% extends "home.html" %}
-    {% block content %}
-        <form style="text-align:center" method = 'POST' autocomplete="off">
-            <legend>Add Hospital</legend>
-            {{ form.hidden_tag() }}
-            
-            <div>
-            {{ form.hospital_name.label }}<br>
-            {{ form.hospital_name }}
-            <br>
-            
-            {{ form.contact_number.label }}<br>
-            {{ form.contact_number }}
-            <br>
-            <br> 
+{% extends "hospitals.html" %}
+    {% block div_css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/addhospital.css') }}">
+    {% endblock %}
 
-            {{ form.user }}
-            <br>                           
-            <br>
-            {{ form.submit }}
-            </div>        
-        </form>
+    {% block div %}
+        <div class = "wrapper">
+            <div class="container-sub">
+                <h3 style="text-align: center;font-family:'Lucida Console';color:#e9dfdf;">Add Hospital</h3>
+                <form method = 'POST' autocomplete="off">
+                    {{ form.hidden_tag() }}                
+                    {{ form.hospital_name(class_="form-control") }}
+                    {{ form.contact_number(class_="form-control") }}  
+                    <h6 style="text-align: center;font-family:'Lucida Console';color:#e9dfdf;">Assign user</h6>
+                    {{ form.user(placeholder="please choose",class_="form-control") }}              
+                    {{ form.submit(class_="button") }}
+                </form>
+            </div>
+        </div>
     {% endblock %}

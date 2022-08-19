@@ -4,7 +4,6 @@ from covid_app import db
 from datetime import datetime
 from sqlalchemy import Date
 
-
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key = True )
     username = db.Column(db.String(20), nullable = False)
@@ -12,7 +11,6 @@ class Users(db.Model):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False)
     hospitals = db.relationship('Hospitals', backref = 'users')
-
 
 class Hospitals(db.Model):
     id = db.Column(db.Integer, primary_key = True )
@@ -27,7 +25,6 @@ class Hospitals(db.Model):
     is_deleted = db.Column(db.Boolean, default=False)
     covidtest = db.relationship('CovidTest', backref = 'hospital_test')
     
-
 class Patients(db.Model):
     id = db.Column(db.Integer, primary_key = True )
     unique_id = db.Column(db.String(20),nullable = False, unique = True)
@@ -39,7 +36,6 @@ class Patients(db.Model):
     status = db.Column(db.String(10))
     covidtest = db.relationship('CovidTest', backref = 'patient_test')
     
-
 class CovidTest(db.Model):
     id = db.Column(db.Integer, primary_key = True )
     date_added = db.Column(db.DateTime)

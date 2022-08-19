@@ -1,54 +1,58 @@
 {% extends "update_hospital.html" %}
-
-    {% block head %}
-    <!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/patients.css') }}"-->
-
+    {% block div_css1 %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/patient_display.css') }}">
     {% endblock %}
 
-  
+    {% block sub %}    
+        <div class = "wrapper">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}               
+                {% for message in messages %}
+                    <h4 style="font-size: 15px;font-family:'Lucida Console';color:#46ac42;">{{ message }}</h4>
+                {% endfor %}               
+            {% endif %}
+            {% endwith %}
 
-        {% block sub %}
-    
-        <div>
-            <h2  style="text-align: center;" >{{ Patient }}</h2>
-        </div>
-
-        {% with messages = get_flashed_messages() %}
-         {% if messages %}
-            <ul>
-               {% for message in messages %}
-               <li>{{ message }}</li>
-               {% endfor %}
-            </ul>
-         {% endif %}
-        {% endwith %}
-
-        <div>
-            <h4>First name --> {{ patient_first_name }}</h4>
-            <h4>Last name --> {{ patient_last_name }}</h4>
-            <h4>DOB --> {{ patient_dob}}</h4>
-            <h4>Age --> {{ patient_age }}</h4>
-            <h4>Gender --> {{ patient_gender }}</h4> 
-            <h4>Status --> {{ patient_status }}</h4>                      
-        </div>
-
+        <div class="container-form">
+            <h3 style="text-align: center;color:#7d837d;">Patient Details</h3>
+            <div class="row" style="justify-content: center;">
+                <div class="col-xs-3" id="labels" style="padding-right:30px ;" >
+                    <div class="labels">
+                        <h6>First name :</h6>
+                        <h6>Last name :</h6>
+                        <h6>DOB :</h6>
+                        <h6>Age :</h6>
+                        <h6>Gender :</h6> 
+                        <h6>Status :</h6>  
+                    </div>
+                </div>              
+                <div class="col-xs-3" style="padding-left:30px ;" id="data">
+                    <div class="data">
+                        <h6>{{ patient_first_name }}</h6>
+                        <h6>{{ patient_last_name }}</h6>
+                        <h6>{{ patient_dob}}</h6>
+                        <h6>{{ patient_age }}</h6>
+                        <h6>{{ patient_gender }}</h6> 
+                        <h6>{{ patient_status }}</h6>
+                    </div>  
+                </div>   
+            </div> 
         
-            
-            <form class="form-inline" method="POST">
-                <select name="status" id="status">
+            <h5 style="text-align: center;color:#e9dfdf;padding-top: 30px;">Update patient status</h5>
+            <form class="form-control" method="POST">               
+                <select name="status" id="status" class="status">                    
                     <option value="" disabled="disabled">Update Status</option>  
                     <option value="negative">Negative</option>
                     <option value="positive">Positive</option>
                     <option value="deceased">Deceased</option>           
-                </select>
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-          </div>
-
-            </form>    
-           
-        
-        <a class="btn btn-outline-primary mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
-        {% endblock %}
+                </select>           
+                <button type="submit" class="button-submit">Submit</button>
+            </form>              
+        </div>
+        <div style="padding-top:30px ;">
+            <a class="btn btn-danger mr-1" href="{{url_for('update_hospital',hospital_id = hospital_id)}}" role="button">Return to Home</a>
+        </div>
+    </div>
+    {% endblock %}
     
  
